@@ -1,0 +1,68 @@
+#!/usr/bin/env ruby
+
+require 'fileutils'
+
+include FileUtils
+
+def sh(cmd)
+  puts %x{#{cmd}}
+end
+
+app_name = if ARGV.first
+             ARGV.first.chomp
+           else
+             puts "What's your app's name? "
+             app_name = STDIN.gets.chomp
+           end
+
+polluter_dir = '/tmp/polluter'
+app_dir = File.join(polluter_dir, app_name)
+mkdir_p polluter_dir
+rm_rf app_dir
+
+Dir.chdir(polluter_dir) do
+  sh "rails _3.2.15_ new #{app_name} --skip-active-record --skip-bundle"
+end
+
+open(File.join(app_dir, 'Gemfile'), 'a') do |f|
+  f.puts %{
+gem 'infopark_cloud_connector'
+gem 'infopark_kickstarter'
+  }
+end
+
+polluter_config_dir = File.join(ENV['HOME'], '.config/polluter')
+mkdir_p polluter_config_dir
+
+rails_connector_config = File.join(polluter_config_dir, 'rails_connector.yml')
+custom_cloud_config = File.join(polluter_config_dir, 'custom_cloud.yml')
+
+begin
+  cp rails_connector_config, File.join(app_dir, 'config/rails_connector.yml')
+  cp custom_cloud_config, File.join(app_dir, 'config/custom_cloud.yml')
+rescue
+  puts "[Error] You have an empty #{polluter_config_dir}"
+  exit 1
+end
+
+open(File.join(app_dir, '.gitignore'), 'w') do |f|
+  f.puts %{
+config/rails_connector.yml
+config/custom_cloud.yml
+  }
+end
+
+Dir.chdir(app_dir) do
+  sh 'bundle'
+  sh 'rails g cms:kickstart --examples'
+  sh 'bundle exec rake cms:reset[true]'
+  sh 'bundle exec rake cms:migrate'
+end
+
+puts %{
+
+  Now start the app:
+
+    cd #{app_dir} && rails s -p3013
+
+}
