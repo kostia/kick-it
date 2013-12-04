@@ -15,12 +15,12 @@ app_name = if ARGV.first
              app_name = STDIN.gets.chomp
            end
 
-polluter_dir = '/tmp/polluter'
-app_dir = File.join(polluter_dir, app_name)
-mkdir_p polluter_dir
+kick_it_dir = '/tmp/kick-it'
+app_dir = File.join(kick_it_dir, app_name)
+mkdir_p kick_it_dir
 rm_rf app_dir
 
-Dir.chdir(polluter_dir) do
+Dir.chdir(kick_it_dir) do
   sh "rails _3.2.15_ new #{app_name} --skip-active-record --skip-bundle"
 end
 
@@ -31,17 +31,17 @@ gem 'infopark_kickstarter'
   }
 end
 
-polluter_config_dir = File.join(ENV['HOME'], '.config/polluter')
-mkdir_p polluter_config_dir
+kick_it_config_dir = File.join(ENV['HOME'], '.config/kick-it')
+mkdir_p kick_it_config_dir
 
-rails_connector_config = File.join(polluter_config_dir, 'rails_connector.yml')
-custom_cloud_config = File.join(polluter_config_dir, 'custom_cloud.yml')
+rails_connector_config = File.join(kick_it_config_dir, 'rails_connector.yml')
+custom_cloud_config = File.join(kick_it_config_dir, 'custom_cloud.yml')
 
 begin
   cp rails_connector_config, File.join(app_dir, 'config/rails_connector.yml')
   cp custom_cloud_config, File.join(app_dir, 'config/custom_cloud.yml')
 rescue
-  puts "[Error] You have an empty #{polluter_config_dir}"
+  puts "[Error] You have an empty #{kick_it_config_dir}"
   exit 1
 end
 
