@@ -1,12 +1,25 @@
 #!/usr/bin/env ruby
 
 require 'fileutils'
+require 'optparse'
 
 include FileUtils
 
 def sh(cmd)
   puts %x{#{cmd}}
 end
+
+options = {}
+
+options_parser = OptionParser.new do |opts|
+  opts.banner = 'Usage: kick-it APP_NAME [OPTIONS]'
+
+  opts.on('-l', '--local', 'Use local repos for Infopark gems') do
+    options[:use_local] = true
+  end
+end
+
+options_parser.parse!
 
 app_name = if ARGV.first
              ARGV.first.chomp
@@ -24,15 +37,48 @@ Dir.chdir(kick_it_dir) do
   sh "rails _3.2.15_ new #{app_name} --skip-active-record --skip-bundle"
 end
 
-open(File.join(app_dir, 'Gemfile'), 'a') do |f|
-  f.puts %{
-gem 'infopark_cloud_connector'
-gem 'infopark_kickstarter'
-  }
-end
-
 kick_it_config_dir = File.join(ENV['HOME'], '.config/kick-it')
 mkdir_p kick_it_config_dir
+
+open(File.join(app_dir, 'Gemfile'), 'a') do |f|
+  cloud_connector_dir = File.expand_path(File.join(kick_it_config_dir, 'infopark_cloud_connector'))
+  if options[:use_local] && File.exists?(cloud_connector_dir)
+    real_cloud_connector_dir = File.readlink(cloud_connector_dir)
+    puts "[INFO] Using gem 'infopark_cloud_connector' from '#{real_cloud_connector_dir}'."
+    @bundled_local_gems = true
+    f.puts "gem 'infopark_cloud_connector', path: '#{real_cloud_connector_dir}'"
+  else
+    f.puts "gem 'infopark_cloud_connector'"
+  end
+
+  kickstarter_dir = File.expand_path(File.join(kick_it_config_dir, 'infopark_kickstarter'))
+  if options[:use_local] && File.exists?(kickstarter_dir)
+    real_kickstarter_dir = File.readlink(kickstarter_dir)
+    puts "[INFO] Using gem 'infopark_kickstarter' from '#{real_kickstarter_dir}'."
+    @bundled_local_gems = true
+    f.puts "gem 'infopark_kickstarter', path: '#{real_kickstarter_dir}'"
+  else
+    f.puts "gem 'infopark_kickstarter'"
+  end
+
+  if options[:use_local] && @bundled_local_gems
+    f.puts %{
+group :assets do
+  gem 'less-rails'
+  gem 'therubyracer', require: 'v8'
+  gem 'underscore-rails'
+end
+
+gem 'handlebars_assets', '~> 0.12.0'
+    }
+  end
+end
+
+if options[:use_local] && @bundled_local_gems
+  open(File.join(app_dir, 'config/initializers/handbars_assets.rb'), 'w') do |f|
+    f.puts "HandlebarsAssets::Config.template_namespace = 'InfoparkHandlebarsTemplates'"
+  end
+end
 
 rails_connector_config = File.join(kick_it_config_dir, 'rails_connector.yml')
 custom_cloud_config = File.join(kick_it_config_dir, 'custom_cloud.yml')
@@ -41,7 +87,7 @@ begin
   cp rails_connector_config, File.join(app_dir, 'config/rails_connector.yml')
   cp custom_cloud_config, File.join(app_dir, 'config/custom_cloud.yml')
 rescue
-  puts "[Error] You have an empty #{kick_it_config_dir}"
+  puts "[ERROR] You have no project configurations in '#{kick_it_config_dir}'."
   exit 1
 end
 
