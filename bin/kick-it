@@ -5,6 +5,8 @@ require 'optparse'
 
 include FileUtils
 
+VERSION = '0.0.3'
+
 def sh(cmd)
   puts %x{#{cmd}}
 end
@@ -16,6 +18,11 @@ options_parser = OptionParser.new do |opts|
 
   opts.on('-l', '--local', 'Use local repos for Infopark gems') do
     options[:use_local] = true
+  end
+
+  opts.on('-v', '--version', 'Print the version number') do
+    puts VERSION
+    exit 0
   end
 end
 
