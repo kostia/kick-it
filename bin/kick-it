@@ -5,7 +5,7 @@ require 'optparse'
 
 include FileUtils
 
-VERSION = '0.0.3'
+VERSION = '0.0.4'
 
 @options = {}
 

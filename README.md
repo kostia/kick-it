@@ -45,4 +45,4 @@ For more options see the help: `kick-it -h`.
 
 ## Version
 
-`0.0.3`
+`0.0.4`
