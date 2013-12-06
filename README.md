@@ -2,6 +2,8 @@
 
 Create Kickstarter apps with a snap.
 
+![Kick-it](https://raw.github.com/kostia/kick-it/master/kick-it.png)
+
 ## Installation
 
 `brew install kick-it`. See https://github.com/kostia/homebrew-infopark.
