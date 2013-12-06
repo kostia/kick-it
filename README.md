@@ -39,6 +39,8 @@ When the script is done, chdir to the temp app and start the server.
 
 This will do basically the same, but will try to use local gem repositories if any provided.
 
+For more options see the help: `kick-it -h`.
+
 ## Version
 
 `0.0.3`
