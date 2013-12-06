@@ -7,10 +7,6 @@ include FileUtils
 
 VERSION = '0.0.3'
 
-def sh(cmd)
-  puts %x{#{cmd}}
-end
-
 @options = {}
 
 options_parser = OptionParser.new do |opts|
@@ -22,6 +18,10 @@ options_parser = OptionParser.new do |opts|
 
   opts.on('-f', '--force', 'Skip all confirmations (assume as confirmed)') do
     @options[:autoconfirm] = true
+  end
+
+  opts.on('-q', '--quiet', 'Minimize the output') do
+    @options[:quiet] = true
   end
 
   opts.on('-v', '--version', 'Print the version number') do
@@ -42,6 +42,14 @@ app_name = if ARGV.first
 kick_it_dir = '/tmp/kick-it'
 app_dir = File.join(kick_it_dir, app_name)
 mkdir_p kick_it_dir
+
+def sh(cmd)
+  if @options[:quiet]
+    %x{#{cmd}}
+  else
+    puts %x{#{cmd}}
+  end
+end
 
 def prompt(label, alt)
   print(label)
