@@ -21,13 +21,11 @@ project with a name expressing that fact.
 ### Local repositories
 
 You can use local repositories of the `infopark_cloud_connector` or the `infopark_kickstarter`
-gems by symlinking on of them or both from `~/.config/kick-it`
-and calling CLI with a corresponding option: `kick-it -l`.
+gems by symlinking them from `~/.config/kick-it`.
 
-Example setup:
-```
-/Users/bob/.config/kick-it/infopark_cloud_connector -> /Users/bob/code/rails_connector/cloud_connector
-/Users/bob/.config/kick-it/infopark_kickstarter     -> /Users/bob/code/kickstarter
+```bash
+# ~/.config/kick-it/infopark_cloud_connector -> ~/code/rails_connector/cloud_connector
+# ~/.config/kick-it/infopark_kickstarter     -> ~/code/kickstarter
 ```
 
 ## Usage
@@ -37,7 +35,7 @@ Example setup:
 This will create a Rails app, add appropriate gems and bundle it, generate features, reset and migrate the project.
 When the script is done, chdir to the temp app and start the server.
 
-`kick-it APP_NAME -l`
+`kick-it APP_NAME -L`
 
 This will do basically the same, but will try to use local gem repositories if any provided.
 
