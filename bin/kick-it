@@ -40,16 +40,16 @@ end
 
 options_parser.parse!
 
-app_name = if ARGV.first
+@app_name = if ARGV.first
              ARGV.first.chomp
            else
              puts "What's your app's name? "
-             app_name = STDIN.gets.chomp
+             @app_name = STDIN.gets.chomp
            end
 
-kick_it_dir = '/tmp/kick-it'
-app_dir = File.join(kick_it_dir, app_name)
-mkdir_p kick_it_dir
+@kick_it_dir = '/tmp/kick-it'
+@app_dir = File.join(@kick_it_dir, @app_name)
+@kick_it_config_dir = File.join(ENV['HOME'], '.config/kick-it')
 
 def sh(cmd)
   if @options[:quiet]
@@ -81,102 +81,142 @@ def confirm(label)
   end
 end
 
-if File.exists?(app_dir)
-  puts "[WARNING] Found application in '#{app_dir}'."
+def ensure_tmp_dir_exists
+  mkdir_p @kick_it_dir
+end
 
-  confirm 'Remove?' do
-    rm_rf app_dir
+def cleanup_app_dir
+  if File.exists?(@app_dir)
+    puts "[WARNING] Found application in '#{@app_dir}'."
+
+    confirm 'Remove?' do
+      rm_rf @app_dir
+    end
   end
 end
 
-Dir.chdir(kick_it_dir) do
-  sh "rails _3.2.15_ new #{app_name} --skip-active-record --skip-bundle"
+def generate_rails_app
+  Dir.chdir(@kick_it_dir) do
+    sh "rails _3.2.15_ new #{@app_name} --skip-active-record --skip-bundle"
+  end
 end
 
-kick_it_config_dir = File.join(ENV['HOME'], '.config/kick-it')
-mkdir_p kick_it_config_dir
+def ensure_config_dir_exists
+  mkdir_p @kick_it_config_dir
+end
 
-open(File.join(app_dir, 'Gemfile'), 'a') do |f|
-  cloud_connector_dir = File.expand_path(File.join(kick_it_config_dir, 'infopark_cloud_connector'))
-  if @options[:local_cc] || @options[:use_local]
-    if File.exists?(cloud_connector_dir)
-      real_cloud_connector_dir = File.readlink(cloud_connector_dir)
-      puts "[INFO] Using gem 'infopark_cloud_connector' from '#{real_cloud_connector_dir}'."
-      f.puts "gem 'infopark_cloud_connector', path: '#{real_cloud_connector_dir}'"
+def patch_gemfile
+  open(File.join(@app_dir, 'Gemfile'), 'a') do |f|
+    cloud_connector_dir = File.expand_path(File.join(@kick_it_config_dir, 'infopark_cloud_connector'))
+    if @options[:local_cc] || @options[:use_local]
+      if File.exists?(cloud_connector_dir)
+        real_cloud_connector_dir = File.readlink(cloud_connector_dir)
+        puts "[INFO] Using gem 'infopark_cloud_connector' from '#{real_cloud_connector_dir}'."
+        f.puts "gem 'infopark_cloud_connector', path: '#{real_cloud_connector_dir}'"
+      else
+        puts "[ERROR] Missing '#{cloud_connector_dir}'."
+        exit 1
+      end
     else
-      puts "[ERROR] Missing '#{cloud_connector_dir}'."
-      exit 1
+      f.puts "gem 'infopark_cloud_connector'"
     end
-  else
-    f.puts "gem 'infopark_cloud_connector'"
+
+    kickstarter_dir = File.expand_path(File.join(@kick_it_config_dir, 'infopark_kickstarter'))
+    if @options[:local_ks] || @options[:use_local]
+      if File.exists?(kickstarter_dir)
+        real_kickstarter_dir = File.readlink(kickstarter_dir)
+        puts "[INFO] Using gem 'infopark_kickstarter' from '#{real_kickstarter_dir}'."
+        f.puts "gem 'infopark_kickstarter', path: '#{real_kickstarter_dir}'"
+      else
+        puts "[ERROR] Missing '#{kickstarter_dir}'."
+        exit 1
+      end
+    else
+      f.puts "gem 'infopark_kickstarter'"
+    end
+
+    if @options[:local_cc] || @options[:local_ks] || @options[:use_local]
+      f.puts %{
+  group :assets do
+    gem 'less-rails'
+    gem 'therubyracer', require: 'v8'
+    gem 'underscore-rails'
   end
 
-  kickstarter_dir = File.expand_path(File.join(kick_it_config_dir, 'infopark_kickstarter'))
-  if @options[:local_ks] || @options[:use_local]
-    if File.exists?(kickstarter_dir)
-      real_kickstarter_dir = File.readlink(kickstarter_dir)
-      puts "[INFO] Using gem 'infopark_kickstarter' from '#{real_kickstarter_dir}'."
-      f.puts "gem 'infopark_kickstarter', path: '#{real_kickstarter_dir}'"
-    else
-      puts "[ERROR] Missing '#{kickstarter_dir}'."
-      exit 1
+  gem 'handlebars_assets', '~> 0.12.0'
+      }
     end
-  else
-    f.puts "gem 'infopark_kickstarter'"
   end
+end
 
+def create_handlebars_initializer
   if @options[:local_cc] || @options[:local_ks] || @options[:use_local]
-    f.puts %{
-group :assets do
-  gem 'less-rails'
-  gem 'therubyracer', require: 'v8'
-  gem 'underscore-rails'
+    open(File.join(@app_dir, 'config/initializers/handbars_assets.rb'), 'w') do |f|
+      f.puts "HandlebarsAssets::Config.template_namespace = 'InfoparkHandlebarsTemplates'"
+    end
+  end
 end
 
-gem 'handlebars_assets', '~> 0.12.0'
+def copy_project_configs
+  rails_connector_config = File.join(@kick_it_config_dir, 'rails_connector.yml')
+  custom_cloud_config = File.join(@kick_it_config_dir, 'custom_cloud.yml')
+
+  begin
+    cp rails_connector_config, File.join(@app_dir, 'config/rails_connector.yml')
+    cp custom_cloud_config, File.join(@app_dir, 'config/custom_cloud.yml')
+  rescue
+    puts "[ERROR] You have no project configurations in '#{@kick_it_config_dir}'."
+    exit 1
+  end
+end
+
+def gitignore_project_configs
+  open(File.join(@app_dir, '.gitignore'), 'w') do |f|
+    f.puts %{
+  config/rails_connector.yml
+  config/custom_cloud.yml
     }
   end
 end
 
-if @options[:local_cc] || @options[:local_ks] || @options[:use_local]
-  open(File.join(app_dir, 'config/initializers/handbars_assets.rb'), 'w') do |f|
-    f.puts "HandlebarsAssets::Config.template_namespace = 'InfoparkHandlebarsTemplates'"
-  end
-end
-
-rails_connector_config = File.join(kick_it_config_dir, 'rails_connector.yml')
-custom_cloud_config = File.join(kick_it_config_dir, 'custom_cloud.yml')
-
-begin
-  cp rails_connector_config, File.join(app_dir, 'config/rails_connector.yml')
-  cp custom_cloud_config, File.join(app_dir, 'config/custom_cloud.yml')
-rescue
-  puts "[ERROR] You have no project configurations in '#{kick_it_config_dir}'."
-  exit 1
-end
-
-open(File.join(app_dir, '.gitignore'), 'w') do |f|
-  f.puts %{
-config/rails_connector.yml
-config/custom_cloud.yml
-  }
-end
-
-Dir.chdir(app_dir) do
+def bundle_app
   sh 'bundle'
-  sh 'rails g cms:kickstart --examples'
+end
 
+def run_kickstarter_generator
+  sh 'rails g cms:kickstart --examples'
+end
+
+def reset_tenant
   confirm 'Reset tenant?' do
     sh 'bundle exec rake cms:reset[true]'
   end
+end
 
+def run_migrations
   sh 'bundle exec rake cms:migrate'
+end
+
+ensure_tmp_dir_exists
+cleanup_app_dir
+generate_rails_app
+ensure_config_dir_exists
+patch_gemfile
+create_handlebars_initializer
+copy_project_configs
+gitignore_project_configs
+
+Dir.chdir(@app_dir) do
+  bundle_app
+  run_kickstarter_generator
+  reset_tenant
+  run_migrations
 end
 
 puts %{
 
   Now start the app:
 
-    cd #{app_dir} && rails s -p3013
+    cd #{@app_dir} && rails s -p3013
 
 }
