@@ -98,26 +98,34 @@ mkdir_p kick_it_config_dir
 
 open(File.join(app_dir, 'Gemfile'), 'a') do |f|
   cloud_connector_dir = File.expand_path(File.join(kick_it_config_dir, 'infopark_cloud_connector'))
-  if (@options[:local_cc] || @options[:use_local]) && File.exists?(cloud_connector_dir)
-    real_cloud_connector_dir = File.readlink(cloud_connector_dir)
-    puts "[INFO] Using gem 'infopark_cloud_connector' from '#{real_cloud_connector_dir}'."
-    @bundled_local_gems = true
-    f.puts "gem 'infopark_cloud_connector', path: '#{real_cloud_connector_dir}'"
+  if @options[:local_cc] || @options[:use_local]
+    if File.exists?(cloud_connector_dir)
+      real_cloud_connector_dir = File.readlink(cloud_connector_dir)
+      puts "[INFO] Using gem 'infopark_cloud_connector' from '#{real_cloud_connector_dir}'."
+      f.puts "gem 'infopark_cloud_connector', path: '#{real_cloud_connector_dir}'"
+    else
+      puts "[ERROR] Missing '#{cloud_connector_dir}'."
+      exit 1
+    end
   else
     f.puts "gem 'infopark_cloud_connector'"
   end
 
   kickstarter_dir = File.expand_path(File.join(kick_it_config_dir, 'infopark_kickstarter'))
-  if (@options[:local_ks] || @options[:use_local]) && File.exists?(kickstarter_dir)
-    real_kickstarter_dir = File.readlink(kickstarter_dir)
-    puts "[INFO] Using gem 'infopark_kickstarter' from '#{real_kickstarter_dir}'."
-    @bundled_local_gems = true
-    f.puts "gem 'infopark_kickstarter', path: '#{real_kickstarter_dir}'"
+  if @options[:local_ks] || @options[:use_local]
+    if File.exists?(kickstarter_dir)
+      real_kickstarter_dir = File.readlink(kickstarter_dir)
+      puts "[INFO] Using gem 'infopark_kickstarter' from '#{real_kickstarter_dir}'."
+      f.puts "gem 'infopark_kickstarter', path: '#{real_kickstarter_dir}'"
+    else
+      puts "[ERROR] Missing '#{kickstarter_dir}'."
+      exit 1
+    end
   else
     f.puts "gem 'infopark_kickstarter'"
   end
 
-  if (@options[:local_cc] || @options[:local_ks] || @options[:use_local]) && @bundled_local_gems
+  if @options[:local_cc] || @options[:local_ks] || @options[:use_local]
     f.puts %{
 group :assets do
   gem 'less-rails'
@@ -130,7 +138,7 @@ gem 'handlebars_assets', '~> 0.12.0'
   end
 end
 
-if (@options[:local_cc] || @options[:local_ks] || @options[:use_local]) && @bundled_local_gems
+if @options[:local_cc] || @options[:local_ks] || @options[:use_local]
   open(File.join(app_dir, 'config/initializers/handbars_assets.rb'), 'w') do |f|
     f.puts "HandlebarsAssets::Config.template_namespace = 'InfoparkHandlebarsTemplates'"
   end
