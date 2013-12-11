@@ -4,6 +4,11 @@ Create Kickstarter apps with a snap.
 
 ![Kick-it](https://raw.github.com/kostia/kick-it/master/kick-it.png)
 
+## Big fat warning
+
+Until version `0.1.*` (everything starting with `0.0.`) this tool should be assumed as instable
+and will be changing __dramatically__.
+
 ## Installation
 
 `brew install kick-it`. See https://github.com/kostia/homebrew-infopark.
