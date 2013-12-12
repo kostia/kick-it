@@ -2,6 +2,7 @@
 
 require 'fileutils'
 require 'optparse'
+require 'yaml'
 
 include FileUtils
 
@@ -81,6 +82,15 @@ def confirm(label)
   end
 end
 
+def error(message)
+  puts "[ERROR] #{message}"
+  exit 1
+end
+
+def info(message)
+  puts "[INFO] #{message}"
+end
+
 def ensure_tmp_dir_exists
   mkdir_p @kick_it_dir
 end
@@ -111,11 +121,10 @@ def patch_gemfile
     if @options[:local_cc] || @options[:use_local]
       if File.exists?(cloud_connector_dir)
         real_cloud_connector_dir = File.readlink(cloud_connector_dir)
-        puts "[INFO] Using gem 'infopark_cloud_connector' from '#{real_cloud_connector_dir}'."
+        info "Using gem 'infopark_cloud_connector' from '#{real_cloud_connector_dir}'."
         f.puts "gem 'infopark_cloud_connector', path: '#{real_cloud_connector_dir}'"
       else
-        puts "[ERROR] Missing '#{cloud_connector_dir}'."
-        exit 1
+        error "Missing '#{cloud_connector_dir}'."
       end
     else
       f.puts "gem 'infopark_cloud_connector'"
@@ -125,11 +134,10 @@ def patch_gemfile
     if @options[:local_ks] || @options[:use_local]
       if File.exists?(kickstarter_dir)
         real_kickstarter_dir = File.readlink(kickstarter_dir)
-        puts "[INFO] Using gem 'infopark_kickstarter' from '#{real_kickstarter_dir}'."
+        info "Using gem 'infopark_kickstarter' from '#{real_kickstarter_dir}'."
         f.puts "gem 'infopark_kickstarter', path: '#{real_kickstarter_dir}'"
       else
-        puts "[ERROR] Missing '#{kickstarter_dir}'."
-        exit 1
+        error "Missing '#{kickstarter_dir}'."
       end
     else
       f.puts "gem 'infopark_kickstarter'"
@@ -158,16 +166,27 @@ def create_handlebars_initializer
   end
 end
 
+def assert_valid_tenant_name(rails_connector_config_path)
+  cms_api_url = YAML.load_file(rails_connector_config_path)['cms_api']['url']
+  unless cms_api_url.include?('kickme')
+    error %{Your project has no "kickme" in the name.
+      For security reasons a project used with this tool MUST include a special string "kickme" in it's name, e.g. "fookickme123".
+      See documentation for more details: https://github.com/kostia/kick-it.
+    }
+  end
+end
+
 def copy_project_configs
   rails_connector_config = File.join(@kick_it_config_dir, 'rails_connector.yml')
   custom_cloud_config = File.join(@kick_it_config_dir, 'custom_cloud.yml')
+
+  assert_valid_tenant_name(rails_connector_config)
 
   begin
     cp rails_connector_config, File.join(@app_dir, 'config/rails_connector.yml')
     cp custom_cloud_config, File.join(@app_dir, 'config/custom_cloud.yml')
   rescue
-    puts "[ERROR] You have no project configurations in '#{@kick_it_config_dir}'."
-    exit 1
+    error "You have no project configurations in '#{@kick_it_config_dir}'."
   end
 end
 

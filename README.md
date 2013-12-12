@@ -18,10 +18,14 @@ and will be changing __dramatically__.
 ### Project
 
 Create a project in the Infopark-Console at https://console.infopark.net/ with CMS and CRM.
-Download the configuration ZIP and unpack the files to `~/.config/kick-it`.
+For security reasons a project used with this tool __must__ include a special string `kickme`
+in it's name, e.g. `fookickme123`.
 
-__WARNING__: This project will be resetted every time a new app is created, so please create a
-project with a name expressing that fact.
+Download the configuration ZIP and unpack the files to `~/.config/kick-it`:
+
+```bash
+unzip fookickme123-config.zip -d ~/.config/kick-it/
+```
 
 ### Local repositories
 
