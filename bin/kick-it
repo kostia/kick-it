@@ -139,6 +139,7 @@ def patch_gemfile
       f.puts %{
   group :assets do
     gem 'less-rails'
+    gem 'quiet_assets'
     gem 'therubyracer', require: 'v8'
     gem 'underscore-rails'
   end
