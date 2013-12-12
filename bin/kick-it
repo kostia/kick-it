@@ -21,7 +21,7 @@ options_parser = OptionParser.new do |opts|
     @options[:local_ks] = true
   end
 
-  opts.on('-L', '--local', 'Use local repos for all Infopark gems') do
+  opts.on('-l', '--local', 'Use local repos for all Infopark gems') do
     @options[:use_local] = true
   end
 
@@ -48,9 +48,8 @@ options_parser.parse!
              @app_name = STDIN.gets.chomp
            end
 
-@kick_it_dir = '/tmp/kick-it'
-@app_dir = File.join(@kick_it_dir, @app_name)
-@kick_it_config_dir = File.join(ENV['HOME'], '.config/kick-it')
+@config_dir = File.join(ENV['HOME'], '.config/kick-it')
+@config_file = File.join(@config_dir, 'config.yml')
 
 def sh(cmd)
   if @options[:quiet]
@@ -87,12 +86,47 @@ def error(message)
   exit 1
 end
 
+def config_error(key)
+  error("Missing configuration key '#{key}' in '#{@config_file}'.")
+end
+
 def info(message)
   puts "[INFO] #{message}"
 end
 
-def ensure_tmp_dir_exists
-  mkdir_p @kick_it_dir
+def ensure_config_dir_exists
+  mkdir_p @config_dir
+end
+
+def ensure_config_file_exists
+  unless File.exists?(@config_file)
+    info "Generating initial config in '#{@config_file}'. You may wish to change it."
+    open(@config_file, 'w') do |f|
+      f.puts %{# Configuration for "Kick It!".
+# See https://github.com/kostia/kick-it for details.
+#
+# Where to put the generated apps.
+kicks_home: '/tmp/kicks'
+
+# Local respositories for Infopark gems.
+# cloud_connector: '/Users/bob/Code/infopark_rails_connector/cloud_connector'
+# kickstarter: '/Users/bob/Code/infopark_kickstarter'
+      }
+    end
+  end
+end
+
+def load_config
+  @config = YAML.load_file(@config_file)
+
+  @kicks_home = @config['kicks_home']
+  config_error('kicks_home') unless @kicks_home
+
+  @app_dir = File.join(@kicks_home, @app_name)
+end
+
+def ensure_kicks_home_exists
+  mkdir_p @kicks_home
 end
 
 def cleanup_app_dir
@@ -106,23 +140,20 @@ def cleanup_app_dir
 end
 
 def generate_rails_app
-  Dir.chdir(@kick_it_dir) do
+  Dir.chdir(@kicks_home) do
     sh "rails _3.2.15_ new #{@app_name} --skip-active-record --skip-bundle"
   end
 end
 
-def ensure_config_dir_exists
-  mkdir_p @kick_it_config_dir
-end
-
 def patch_gemfile
   open(File.join(@app_dir, 'Gemfile'), 'a') do |f|
-    cloud_connector_dir = File.expand_path(File.join(@kick_it_config_dir, 'infopark_cloud_connector'))
     if @options[:local_cc] || @options[:use_local]
+      cloud_connector_dir = @config['cloud_connector']
+      config_error('cloud_connector') unless cloud_connector_dir
+
       if File.exists?(cloud_connector_dir)
-        real_cloud_connector_dir = File.readlink(cloud_connector_dir)
-        info "Using gem 'infopark_cloud_connector' from '#{real_cloud_connector_dir}'."
-        f.puts "gem 'infopark_cloud_connector', path: '#{real_cloud_connector_dir}'"
+        info "Using gem 'infopark_cloud_connector' from '#{cloud_connector_dir}'."
+        f.puts "gem 'infopark_cloud_connector', path: '#{cloud_connector_dir}'"
       else
         error "Missing '#{cloud_connector_dir}'."
       end
@@ -130,12 +161,13 @@ def patch_gemfile
       f.puts "gem 'infopark_cloud_connector'"
     end
 
-    kickstarter_dir = File.expand_path(File.join(@kick_it_config_dir, 'infopark_kickstarter'))
     if @options[:local_ks] || @options[:use_local]
+      kickstarter_dir = @config['kickstarter']
+      config_error('kickstarter') unless kickstarter_dir
+
       if File.exists?(kickstarter_dir)
-        real_kickstarter_dir = File.readlink(kickstarter_dir)
-        info "Using gem 'infopark_kickstarter' from '#{real_kickstarter_dir}'."
-        f.puts "gem 'infopark_kickstarter', path: '#{real_kickstarter_dir}'"
+        info "Using gem 'infopark_kickstarter' from '#{kickstarter_dir}'."
+        f.puts "gem 'infopark_kickstarter', path: '#{kickstarter_dir}'"
       else
         error "Missing '#{kickstarter_dir}'."
       end
@@ -145,14 +177,14 @@ def patch_gemfile
 
     if @options[:local_cc] || @options[:local_ks] || @options[:use_local]
       f.puts %{
-  group :assets do
-    gem 'less-rails'
-    gem 'quiet_assets'
-    gem 'therubyracer', require: 'v8'
-    gem 'underscore-rails'
-  end
+group :assets do
+  gem 'less-rails'
+  gem 'quiet_assets'
+  gem 'therubyracer', require: 'v8'
+  gem 'underscore-rails'
+end
 
-  gem 'handlebars_assets', '~> 0.12.0'
+gem 'handlebars_assets', '~> 0.12.0'
       }
     end
   end
@@ -166,8 +198,17 @@ def create_handlebars_initializer
   end
 end
 
-def assert_valid_tenant_name(rails_connector_config_path)
-  cms_api_url = YAML.load_file(rails_connector_config_path)['cms_api']['url']
+def copy_project_configs
+  %w[rails_connector.yml custom_cloud.yml].each do |config_name|
+    config_file = File.join(@config_dir, config_name)
+    error("Missing '#{config_file}'.") unless File.exists?(config_file)
+    cp config_file, File.join(@app_dir, "config/#{config_name}")
+  end
+end
+
+def assert_valid_tenant_name
+  cms_api_url = YAML.load_file(File.join(@app_dir, 'config/rails_connector.yml'))['cms_api']['url']
+
   unless cms_api_url.include?('kickme')
     error %{Your project has no "kickme" in the name.
       For security reasons a project used with this tool MUST include a special string "kickme" in it's name, e.g. "fookickme123".
@@ -176,25 +217,11 @@ def assert_valid_tenant_name(rails_connector_config_path)
   end
 end
 
-def copy_project_configs
-  rails_connector_config = File.join(@kick_it_config_dir, 'rails_connector.yml')
-  custom_cloud_config = File.join(@kick_it_config_dir, 'custom_cloud.yml')
-
-  assert_valid_tenant_name(rails_connector_config)
-
-  begin
-    cp rails_connector_config, File.join(@app_dir, 'config/rails_connector.yml')
-    cp custom_cloud_config, File.join(@app_dir, 'config/custom_cloud.yml')
-  rescue
-    error "You have no project configurations in '#{@kick_it_config_dir}'."
-  end
-end
-
 def gitignore_project_configs
   open(File.join(@app_dir, '.gitignore'), 'w') do |f|
     f.puts %{
-  config/rails_connector.yml
-  config/custom_cloud.yml
+config/rails_connector.yml
+config/custom_cloud.yml
     }
   end
 end
@@ -217,13 +244,18 @@ def run_migrations
   sh 'bundle exec rake cms:migrate'
 end
 
-ensure_tmp_dir_exists
+ensure_config_dir_exists
+ensure_config_file_exists
+load_config
+
+ensure_kicks_home_exists
 cleanup_app_dir
 generate_rails_app
-ensure_config_dir_exists
+
 patch_gemfile
 create_handlebars_initializer
 copy_project_configs
+assert_valid_tenant_name
 gitignore_project_configs
 
 Dir.chdir(@app_dir) do

@@ -15,8 +15,6 @@ and will be changing __dramatically__.
 
 ## Configuration
 
-### Project
-
 Create a project in the Infopark-Console at https://console.infopark.net/ with CMS and CRM.
 For security reasons a project used with this tool __must__ include a special string `kickme`
 in it's name, e.g. `fookickme123`.
@@ -27,28 +25,28 @@ Download the configuration ZIP and unpack the files to `~/.config/kick-it`:
 unzip fookickme123-config.zip -d ~/.config/kick-it/
 ```
 
-### Local repositories
+### Configuring local repositories
 
-You can use local repositories of the `infopark_cloud_connector` or the `infopark_kickstarter`
-gems by symlinking them from `~/.config/kick-it`.
+You can use local repositories of the `infopark_cloud_connector` or the `infopark_kickstarter`.
+Change the corresponding keys in `~/.config/kick-it/config.yml`.
 
-```bash
-# ~/.config/kick-it/infopark_cloud_connector -> ~/code/rails_connector/cloud_connector
-# ~/.config/kick-it/infopark_kickstarter     -> ~/code/kickstarter
-```
+### Persisting generated apps
+
+By default the apps will be generated in `/tmp/kicks` and thus would not survive a reboot.
+In order to "persist" the generated apps you have to change the
+corresponding key in `~/.config/kick-it/config.yml`.
 
 ## Usage
 
-`kick-it APP_NAME`
-
-This will create a Rails app, add appropriate gems and bundle it, generate features, reset and migrate the project.
-When the script is done, chdir to the temp app and start the server.
-
-`kick-it APP_NAME -L`
-
-This will do basically the same, but will try to use local gem repositories if any provided.
-
-For more options see the help: `kick-it -h`.
+```
+kick-it APP_NAME [OPTIONS]
+    -c, --local-cc                   Use local repo for Infopark Cloud Connector gem
+    -k, --local-ks                   Use local repo for Infopark Kickstarter gem
+    -l, --local                      Use local repos for all Infopark gems
+    -f, --force                      Skip all confirmations (assume as confirmed)
+    -q, --quiet                      Minimize the output
+    -v, --version                    Print the version number
+```
 
 ## Version
 
