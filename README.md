@@ -15,13 +15,11 @@ For security reasons a project used with this tool __must__ include a special st
 in it's name, e.g. `fookickme123`.
 
 2. Download and import the configuration ZIP:
-
 ```bash
 kick-it -i ~/Downloads/fookickme123-config.zip
 ```
 
 3. Change global configuration (if you wish):
-
 ```bash
 kick-it -e
 ```
@@ -30,11 +28,16 @@ kick-it -e
 
 You can use local repositories of the `infopark_cloud_connector` or the `infopark_kickstarter`.
 
-1. Change the corresponding keys in the global configuration.
-2. You can now kick the apps with local gems:
-
+1. Add the corresponding keys `cloud_connector` and `kickstarter` with appropriate paths in the global configuration:
 ```bash
-kick-it my_app -l
+kick-it -e
+```
+
+2. You can now kick the apps using local gems:
+```bash
+kick-it my_app -l # Use all gems
+kick-it my_app -c # Use only Infopark Cloud Connector gem
+kick-it my_app -k # Use only Infopark Kickstarter gem
 ```
 
 ### Persisting generated apps
