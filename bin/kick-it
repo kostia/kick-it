@@ -6,7 +6,7 @@ require 'yaml'
 
 include FileUtils
 
-VERSION = '0.0.5'
+VERSION = '0.0.6'
 
 def sh(cmd)
   if @options[:quiet]

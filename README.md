@@ -68,4 +68,4 @@ corresponding key `kicks_home` in the global configuration.
 
 ## Version
 
-`0.0.5`
+`0.0.6`
