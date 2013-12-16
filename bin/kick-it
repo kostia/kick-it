@@ -24,12 +24,13 @@ end
 
 def confirm(label)
   if @options[:autoconfirm]
-    yield
+    yield if block_given?
   else
     case prompt("#{label} [Y/n]: ", 'y').downcase
     when 'y', 'yes'
-      yield
+      yield if block_given?
     when 'n', 'no'
+      puts 'Exiting...'
       exit 0
     else
       puts "Huh?... Don't know what you mean. Exiting!"
@@ -53,6 +54,10 @@ end
 
 def info(message)
   puts "[INFO] #{message}"
+end
+
+def warn(message)
+  puts "[WARNING] #{message}"
 end
 
 def calculate_app_dir(app_name)
@@ -106,16 +111,18 @@ def parse_options
 
   options_parser = OptionParser.new do |opts|
     opts.banner = %{Usage:
-  Generating apps: kick-it APP_NAME [-cklfq]
-  Opening apps:    kick-it -[o] APP_NAME
-  Global options:  kick-it -[ev]
+  Generate an app:           kick-it APP_NAME [-cklfq]
+  Open an app:               kick-it -o APP_NAME
+  Edit global configuration: kick-it -e
+  Import project ZIP:        kick-it -i PATH_TO_ZIP
+  Help and version:          kick-it [-hv]
     }
 
-    opts.on('-c', '--local-cc', 'Use local repo for Infopark Cloud Connector gem') do
+    opts.on('-c', '--local-cloud-connector', 'Use local repo for Infopark Cloud Connector gem') do
       @options[:local_cc] = true
     end
 
-    opts.on('-k', '--local-ks', 'Use local repo for Infopark Kickstarter gem') do
+    opts.on('-k', '--local-kickstarter', 'Use local repo for Infopark Kickstarter gem') do
       @options[:local_ks] = true
     end
 
@@ -131,7 +138,7 @@ def parse_options
       @options[:quiet] = true
     end
 
-    opts.on('-o app_name', '--open-app', 'Open kicked app in $EDITOR') do |app_name|
+    opts.on('-o app_name', '--open-app app_name', 'Open kicked app in $EDITOR') do |app_name|
       app_dir = calculate_app_dir(app_name)
 
       if File.exists?(app_dir)
@@ -149,6 +156,15 @@ def parse_options
       exec("/usr/bin/env $EDITOR #{@config_file}")
     end
 
+    opts.on('-i path', '--import path', 'Import project settings ZIP') do |path|
+      if File.exists?(path)
+        sh "unzip #{path} -d #{@config_dir}"
+        exit 0
+      else
+        error "Missing '#{path}'."
+      end
+    end
+
     opts.on('-v', '--version', 'Print the version number') do
       puts VERSION
       exit 0
@@ -164,8 +180,7 @@ end
 
 def cleanup_app_dir
   if File.exists?(@app_dir)
-    puts "[WARNING] Found application in '#{@app_dir}'."
-
+    warn "Found application in '#{@app_dir}'."
     confirm 'Remove?' do
       rm_rf @app_dir
     end
