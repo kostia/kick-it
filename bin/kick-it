@@ -8,49 +8,6 @@ include FileUtils
 
 VERSION = '0.0.5'
 
-@options = {}
-
-options_parser = OptionParser.new do |opts|
-  opts.banner = 'Usage: kick-it APP_NAME [OPTIONS]'
-
-  opts.on('-c', '--local-cc', 'Use local repo for Infopark Cloud Connector gem') do
-    @options[:local_cc] = true
-  end
-
-  opts.on('-k', '--local-ks', 'Use local repo for Infopark Kickstarter gem') do
-    @options[:local_ks] = true
-  end
-
-  opts.on('-l', '--local', 'Use local repos for all Infopark gems') do
-    @options[:use_local] = true
-  end
-
-  opts.on('-f', '--force', 'Skip all confirmations (assume as confirmed)') do
-    @options[:autoconfirm] = true
-  end
-
-  opts.on('-q', '--quiet', 'Minimize the output') do
-    @options[:quiet] = true
-  end
-
-  opts.on('-v', '--version', 'Print the version number') do
-    puts VERSION
-    exit 0
-  end
-end
-
-options_parser.parse!
-
-@app_name = if ARGV.first
-             ARGV.first.chomp
-           else
-             puts "What's your app's name? "
-             @app_name = STDIN.gets.chomp
-           end
-
-@config_dir = File.join(ENV['HOME'], '.config/kick-it')
-@config_file = File.join(@config_dir, 'config.yml')
-
 def sh(cmd)
   if @options[:quiet]
     %x{#{cmd}}
@@ -94,11 +51,23 @@ def info(message)
   puts "[INFO] #{message}"
 end
 
+def parse_app_name
+  @app_name = if ARGV.first
+               ARGV.first.chomp
+             else
+               puts "What's your app's name? "
+               @app_name = STDIN.gets.chomp
+             end
+end
+
 def ensure_config_dir_exists
+  @config_dir = File.join(ENV['HOME'], '.config/kick-it')
   mkdir_p @config_dir
 end
 
 def ensure_config_file_exists
+  @config_file = File.join(@config_dir, 'config.yml')
+
   unless File.exists?(@config_file)
     info "Generating initial config in '#{@config_file}'. You may wish to change it."
     open(@config_file, 'w') do |f|
@@ -114,6 +83,48 @@ kicks_home: '/tmp/kicks'
       }
     end
   end
+end
+
+def parse_options
+  @options = {}
+
+  options_parser = OptionParser.new do |opts|
+    opts.banner = %{Usage:
+  kick-it APP_NAME [-cklfq]
+  kick-it -[ev]
+    }
+
+    opts.on('-c', '--local-cc', 'Use local repo for Infopark Cloud Connector gem') do
+      @options[:local_cc] = true
+    end
+
+    opts.on('-k', '--local-ks', 'Use local repo for Infopark Kickstarter gem') do
+      @options[:local_ks] = true
+    end
+
+    opts.on('-l', '--local', 'Use local repos for all Infopark gems') do
+      @options[:use_local] = true
+    end
+
+    opts.on('-f', '--force', 'Skip all confirmations (assume as confirmed)') do
+      @options[:autoconfirm] = true
+    end
+
+    opts.on('-q', '--quiet', 'Minimize the output') do
+      @options[:quiet] = true
+    end
+
+    opts.on('-e', '--edit-config', 'Open configuration file in $EDITOR') do
+      exec("/usr/bin/env $EDITOR #{@config_file}") if ENV['EDITOR']
+    end
+
+    opts.on('-v', '--version', 'Print the version number') do
+      puts VERSION
+      exit 0
+    end
+  end
+
+  options_parser.parse!
 end
 
 def load_config
@@ -246,6 +257,9 @@ end
 
 ensure_config_dir_exists
 ensure_config_file_exists
+parse_options
+
+parse_app_name
 load_config
 
 ensure_kicks_home_exists
