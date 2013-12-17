@@ -111,10 +111,10 @@ def parse_options
 
   options_parser = OptionParser.new do |opts|
     opts.banner = %{Usage:
-  Generate an app:           kick-it APP_NAME [-cklfq]
+  Generate an app:           kick-it APP_NAME [-cklfq] [-p PROJECT_NAME]
   Open an app:               kick-it -o APP_NAME
   Edit global configuration: kick-it -e
-  Import project ZIP:        kick-it -i PATH_TO_ZIP
+  Import project ZIP:        kick-it -i PATH_TO_ZIP [-p PROJECT_NAME]
   Help and version:          kick-it [-hv]
     }
 
@@ -157,12 +157,14 @@ def parse_options
     end
 
     opts.on('-i path', '--import path', 'Import project settings ZIP') do |path|
-      if File.exists?(path)
-        sh "unzip #{path} -d #{@config_dir}"
-        exit 0
-      else
-        error "Missing '#{path}'."
-      end
+      @options[:action] = :import
+      @options[:zip_path] = path
+    end
+
+    opts.on('-p project_name', '--project project_name',
+        'Use alternative project configuration') do |project_name|
+      info "Using project '#{project_name}'."
+      @options[:project_name] = project_name
     end
 
     opts.on('-v', '--version', 'Print the version number') do
@@ -247,8 +249,14 @@ def create_handlebars_initializer
 end
 
 def copy_project_configs
+  config_dir = if project_name = @options[:project_name]
+                 File.join(@config_dir, project_name)
+               else
+                 @config_dir
+               end
+
   %w[rails_connector.yml custom_cloud.yml].each do |config_name|
-    config_file = File.join(@config_dir, config_name)
+    config_file = File.join(config_dir, config_name)
     error("Missing '#{config_file}'.") unless File.exists?(config_file)
     cp config_file, File.join(@app_dir, "config/#{config_name}")
   end
@@ -292,6 +300,49 @@ def run_migrations
   sh 'bundle exec rake cms:migrate'
 end
 
+def import_config
+  path = @options[:zip_path]
+
+  if File.exists?(path)
+    target_dir = if project_name = @options[:project_name]
+                   File.join(@config_dir, project_name)
+                 else
+                   @config_dir
+                 end
+    mkdir_p target_dir
+    sh "unzip #{path} -d #{target_dir}"
+  else
+    error "Missing '#{path}'."
+  end
+end
+
+def generate_app
+  ensure_kicks_home_exists
+  cleanup_app_dir
+  generate_rails_app
+
+  patch_gemfile
+  create_handlebars_initializer
+  copy_project_configs
+  assert_valid_tenant_name
+  gitignore_project_configs
+
+  Dir.chdir(@app_dir) do
+    bundle_app
+    run_kickstarter_generator
+    reset_tenant
+    run_migrations
+  end
+
+  puts %{
+
+    Now start the app:
+
+      cd #{@app_dir} && rails s -p3013
+
+  }
+end
+
 ensure_config_dir_exists
 ensure_config_file_exists
 load_config
@@ -299,27 +350,8 @@ load_config
 parse_app_name
 parse_options
 
-ensure_kicks_home_exists
-cleanup_app_dir
-generate_rails_app
-
-patch_gemfile
-create_handlebars_initializer
-copy_project_configs
-assert_valid_tenant_name
-gitignore_project_configs
-
-Dir.chdir(@app_dir) do
-  bundle_app
-  run_kickstarter_generator
-  reset_tenant
-  run_migrations
+if @options[:action] == :import
+  import_config
+else
+  generate_app
 end
-
-puts %{
-
-  Now start the app:
-
-    cd #{@app_dir} && rails s -p3013
-
-}
