@@ -24,6 +24,9 @@ kick-it -i ~/Downloads/fookickme123-config.zip
 kick-it -e
 ```
 
+Global configuration file is placed in `~/.config/kick-it/config.yml`.
+Default project configuration files are kept in `~/.config/kick-it/`.
+
 ## Usage
 
 ```
@@ -79,6 +82,8 @@ kick-it -i ~/Downloads/fookickme123-config.zip -p do_not_reset_me
 ```bash
 kick-it my_feature_app -p do_not_reset_me
 ```
+
+Named alternative project configuration files are kept in `~/.config/kick-it/PROJECT_NAME`.
 
 ### Persisting generated apps
 
