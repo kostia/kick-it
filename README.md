@@ -93,4 +93,4 @@ corresponding key `kicks_home` in the global configuration.
 
 ## Version
 
-`0.0.6`
+`0.0.7`
