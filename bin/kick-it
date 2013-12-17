@@ -100,8 +100,7 @@ def parse_app_name
   @app_name = if ARGV.first
                ARGV.first.chomp
              else
-               puts "What's your app's name? "
-               @app_name = STDIN.gets.chomp
+               error "Missing 'APP_NAME'. See 'kick-it -h' for help."
              end
   @app_dir = calculate_app_dir(@app_name)
 end
@@ -347,8 +346,8 @@ ensure_config_dir_exists
 ensure_config_file_exists
 load_config
 
-parse_app_name
 parse_options
+parse_app_name
 
 if @options[:action] == :import
   import_config
