@@ -9,7 +9,7 @@ include FileUtils
 VERSION = '0.0.7'
 
 def sh(cmd)
-  if @options[:quiet]
+  if @options[:quiet] || @config['quiet']
     %x{#{cmd}}
   else
     puts %x{#{cmd}}
@@ -47,7 +47,7 @@ def prompt(label, alt)
 end
 
 def confirm(label)
-  if @options[:autoconfirm]
+  if @options[:autoconfirm] || @config['force']
     yield if block_given?
   else
     case prompt("#{label} [Y/n]: ", 'y').downcase
@@ -109,6 +109,13 @@ kicks_home: '/tmp/kicks'
 # Local respositories for Infopark gems.
 # cloud_connector: '/Users/bob/Code/infopark_rails_connector/cloud_connector'
 # kickstarter: '/Users/bob/Code/infopark_kickstarter'
+
+# Default options for kicking apps.
+force:                 false # Same as the "-f" CLI option.
+local:                 false # Same as the "-l" CLI option.
+local_cloud_connector: false # Same as the "-c" CLI option.
+local_kickstarter:     false # Same as the "-k" CLI option.
+quiet:                 false # Same as the "-q" CLI option.
       }
     end
   end
@@ -218,9 +225,19 @@ def generate_rails_app
   end
 end
 
+def use_local_cc?
+  @options[:local_cc] || @options[:use_local] ||
+      @config['local_cloud_connector'] || @config['local']
+end
+
+def use_local_ks?
+  @options[:local_ks] || @options[:use_local] ||
+      @config['local_kickstarter'] || @config['local']
+end
+
 def patch_gemfile
   open(File.join(@app_dir, 'Gemfile'), 'a') do |f|
-    if @options[:local_cc] || @options[:use_local]
+    if use_local_cc?
       cloud_connector_dir = @config['cloud_connector']
       config_error('cloud_connector') unless cloud_connector_dir
 
@@ -234,7 +251,7 @@ def patch_gemfile
       f.puts "gem 'infopark_cloud_connector'"
     end
 
-    if @options[:local_ks] || @options[:use_local]
+    if use_local_ks?
       kickstarter_dir = @config['kickstarter']
       config_error('kickstarter') unless kickstarter_dir
 
