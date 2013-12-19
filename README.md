@@ -1,26 +1,33 @@
 # Kick it!
 
-Create Kickstarter apps with a snap.
+Create [Infopark Kickstarter](https://dev.infopark.net/kickstarter) apps with a snap.
 
 ![Kick-it](https://raw.github.com/kostia/kick-it/master/kick-it.png)
 
 ## Installation
 
-`brew install kick-it`. See https://github.com/kostia/homebrew-infopark.
+`brew install kick-it`.
+
+See also https://github.com/kostia/homebrew-infopark.
 
 ## Configuration
 
-1. Create a project in the Infopark-Console at https://console.infopark.net/ with CMS and CRM.
-For security reasons a project used with this tool __must__ include a special string `kickme`
-in it's name, e.g. `fookickme123`.
+1. Create a new project at https://console.infopark.net/ with a CMS and a CRM (see [Getting started](https://dev.infopark.net/getting-started) for details).
+For security reasons this project __MUST__ include a special string `kickme` in it's name, e.g. `fookickme123`.
 
 2. Download and import the configuration ZIP:
 ```bash
 kick-it -i ~/Downloads/fookickme123-config.zip
 ```
+See also [multiple project configurations](https://github.com/kostia/kick-it/wiki/Multiple-project-configurations).
 
 ## Usage
 
+```bash
+kick-it APP_NAME
+```
+
+Full list of options:
 ```
   Generate an app:           kick-it APP_NAME [-cklfq] [-p PROJECT_NAME]
   Open an app:               kick-it -o APP_NAME
