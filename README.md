@@ -19,14 +19,6 @@ in it's name, e.g. `fookickme123`.
 kick-it -i ~/Downloads/fookickme123-config.zip
 ```
 
-3. Change global configuration (if you wish):
-```bash
-kick-it -e
-```
-
-Global configuration file is placed in `~/.config/kick-it/config.yml`.
-Default project configuration files are kept in `~/.config/kick-it/`.
-
 ## Usage
 
 ```
@@ -48,48 +40,13 @@ Default project configuration files are kept in `~/.config/kick-it/`.
     -v, --version                    Print the version number
 ```
 
-## Special cases
+## Documentation
 
-### Local repositories
+Take a look at the [Wiki](https://github.com/kostia/kick-it/wiki):
 
-When developing on Infopark gems, you may wish to generate an app, which uses you local repositories.
-You can use local repositories of the `infopark_cloud_connector` or the `infopark_kickstarter`.
-
-1. Add the corresponding keys `cloud_connector` and `kickstarter` with appropriate paths in the global configuration:
-```bash
-kick-it -e
-```
-
-2. You can now kick the apps using local gems:
-```bash
-kick-it my_app -l # Use all gems
-kick-it my_app -c # Use only Infopark Cloud Connector gem
-kick-it my_app -k # Use only Infopark Kickstarter gem
-```
-
-### Multiple projects
-
-You can have several different projects configurations. For example: you want to have one app,
-on which you develop for a long period of time and another app, on which you want to check something quickly.
-Both apps can't share same project, because they would reset each others content.
-
-1. Import a named alternative project configuration:
-```bash
-kick-it -i ~/Downloads/fookickme123-config.zip -p do_not_reset_me
-```
-
-2. Then you can generate an app with this configuration:
-```bash
-kick-it my_feature_app -p do_not_reset_me
-```
-
-Named alternative project configuration files are kept in `~/.config/kick-it/PROJECT_NAME`.
-
-### Persisting generated apps
-
-By default the apps will be generated in `/tmp/kicks` and thus would not survive a reboot.
-In order to "persist" the generated apps you have to change the
-corresponding key `kicks_home` in the global configuration.
+* [Using local repositories](https://github.com/kostia/kick-it/wiki/Using-local-repositories)
+* [Multiple project configurations](https://github.com/kostia/kick-it/wiki/Multiple-project-configurations)
+* [Persisting generated apps](https://github.com/kostia/kick-it/wiki/Persisting-generated-apps)
 
 ## Version
 
