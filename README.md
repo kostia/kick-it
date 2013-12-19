@@ -27,7 +27,7 @@ See also [multiple project configurations](https://github.com/kostia/kick-it/wik
 kick-it APP_NAME
 ```
 
-Full list of options:
+Full list of CLI options:
 ```
   Generate an app:           kick-it APP_NAME [-cklfq] [-p PROJECT_NAME]
   Open an app:               kick-it -o APP_NAME
@@ -45,6 +45,23 @@ Full list of options:
     -i, --import path                Import project settings ZIP
     -p, --project project_name       Use alternative project configuration
     -v, --version                    Print the version number
+```
+
+Full list of configuration options:
+```yaml
+# Where to put the generated apps.
+kicks_home: '/tmp/kicks'
+
+# Local respositories for Infopark gems.
+cloud_connector: '/Users/bob/Code/infopark_rails_connector/cloud_connector'
+kickstarter: '/Users/bob/Code/infopark_kickstarter'
+
+# Default options for kicking apps.
+force:                 false # Same as the "-f" CLI option.
+local:                 false # Same as the "-l" CLI option.
+local_cloud_connector: false # Same as the "-c" CLI option.
+local_kickstarter:     false # Same as the "-k" CLI option.
+quiet:                 false # Same as the "-q" CLI option.
 ```
 
 ## Documentation
