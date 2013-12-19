@@ -6,7 +6,7 @@ require 'yaml'
 
 include FileUtils
 
-VERSION = '0.0.8'
+VERSION = '0.0.8.1'
 
 def sh(cmd)
   if @options[:quiet] || @config['quiet']
@@ -225,6 +225,10 @@ def generate_rails_app
   end
 end
 
+def use_anything_local?
+  use_local_cc? || use_local_ks?
+end
+
 def use_local_cc?
   @options[:local_cc] || @options[:use_local] ||
       @config['local_cloud_connector'] || @config['local']
@@ -265,7 +269,7 @@ def patch_gemfile
       f.puts "gem 'infopark_kickstarter'"
     end
 
-    if @options[:local_cc] || @options[:local_ks] || @options[:use_local]
+    if use_anything_local?
       f.puts %{
 group :assets do
   gem 'less-rails'
@@ -281,7 +285,7 @@ gem 'handlebars_assets', '~> 0.12.0'
 end
 
 def create_handlebars_initializer
-  if @options[:local_cc] || @options[:local_ks] || @options[:use_local]
+  if use_anything_local?
     open(File.join(@app_dir, 'config/initializers/handbars_assets.rb'), 'w') do |f|
       f.puts "HandlebarsAssets::Config.template_namespace = 'InfoparkHandlebarsTemplates'"
     end
