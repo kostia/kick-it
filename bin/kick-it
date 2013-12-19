@@ -16,8 +16,32 @@ def sh(cmd)
   end
 end
 
+def supports_colored_output?
+  %x{tput colors 2>/dev/null}.to_i > 0
+end
+
+def cololize(text, color_code)
+  supports_colored_output? ? "\e[#{color_code}m#{text}\e[0m" : text
+end
+
+def red(text)
+  cololize(text, 31)
+end
+
+def green(text)
+  cololize(text, 32)
+end
+
+def yellow(text)
+  cololize(text, 33)
+end
+
+def blue(text)
+  cololize(text, 34)
+end
+
 def prompt(label, alt)
-  print(label)
+  print(green(label))
   input = STDIN.gets.chomp
   input == '' ? alt : input
 end
@@ -30,17 +54,17 @@ def confirm(label)
     when 'y', 'yes'
       yield if block_given?
     when 'n', 'no'
-      puts 'Exiting...'
+      puts red('Exiting...')
       exit 0
     else
-      puts "Huh?... Don't know what you mean. Exiting!"
+      puts red("Huh?... Don't know what you mean. Exiting!")
       exit 1
     end
   end
 end
 
 def error(message)
-  puts "[ERROR] #{message}"
+  puts red("[ERROR] #{message}")
   exit 1
 end
 
@@ -53,11 +77,11 @@ def assert_env_var(var_name)
 end
 
 def info(message)
-  puts "[INFO] #{message}"
+  puts blue("[INFO] #{message}")
 end
 
 def warn(message)
-  puts "[WARNING] #{message}"
+  puts yellow("[WARNING] #{message}")
 end
 
 def calculate_app_dir(app_name)
@@ -333,13 +357,13 @@ def generate_app
     run_migrations
   end
 
-  puts %{
+  puts green(%{
 
     Now start the app:
 
       cd #{@app_dir} && rails s -p3013
 
-  }
+  })
 end
 
 ensure_config_dir_exists
