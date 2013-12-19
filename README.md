@@ -55,6 +55,12 @@ Take a look at the [Wiki](https://github.com/kostia/kick-it/wiki):
 * [Multiple project configurations](https://github.com/kostia/kick-it/wiki/Multiple-project-configurations)
 * [Persisting generated apps](https://github.com/kostia/kick-it/wiki/Persisting-generated-apps)
 
+## License
+
+[LGPG-3.0](http://www.gnu.org/licenses/lgpl-3.0.html) License.
+Copyright 2013 Infopark AG.
+http://www.infopark.com
+
 ## Version
 
 `0.0.7`
