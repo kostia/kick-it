@@ -97,20 +97,32 @@ def ensure_config_file_exists
   @config_file = File.join(@config_dir, 'config.yml')
 
   unless File.exists?(@config_file)
-    info "Generating initial config in '#{@config_file}'. You may wish to change it."
+    info "Generating initial config in '#{@config_file}'. You may wish to change it with 'kick-it -e' command."
 
     open(@config_file, 'w') do |f|
-      f.puts %{# Configuration for "Kick It!".
+      f.puts %{#
+# Configuration file for "Kick It!".
 # See https://github.com/kostia/kick-it for details.
 #
+# Find me in '~/.config/kick-it/config.yml'.
+# Edit me with 'kick-it -e' command.
+#
+
+#
 # Where to put the generated apps.
+#
 kicks_home: '/tmp/kicks'
 
+#
 # Local respositories for Infopark gems.
+# Uncomment following to enable usage of local repositories.
+#
 # cloud_connector: '/Users/bob/Code/infopark_rails_connector/cloud_connector'
-# kickstarter: '/Users/bob/Code/infopark_kickstarter'
+# kickstarter:     '/Users/bob/Code/infopark_kickstarter'
 
+#
 # Default options for kicking apps.
+#
 force:                 false # Same as the "-f" CLI option.
 local:                 false # Same as the "-l" CLI option.
 local_cloud_connector: false # Same as the "-c" CLI option.
