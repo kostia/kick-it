@@ -6,13 +6,15 @@ Create [Infopark Kickstarter](https://dev.infopark.net/kickstarter) apps with a 
 
 ## Installation
 
-`brew install kick-it`.
-
+```bash
+brew tap kostia/infopark # Attention: Repository location may change.
+brew install kick-it
+```
 See also https://github.com/kostia/homebrew-infopark.
 
 ## Configuration
 
-1. Create a new project at https://console.infopark.net/ with a CMS and a CRM (see [Getting started](https://dev.infopark.net/getting-started) for details).
+1. Create a new project at https://console.infopark.net/ with a CMS and a CRM (see [this article](https://dev.infopark.net/getting-started) for details).
 For security reasons this project __MUST__ include a special string `kickme` in it's name, e.g. `fookickme123`.
 
 2. Download and import the configuration ZIP:
@@ -21,10 +23,18 @@ kick-it -i ~/Downloads/fookickme123-config.zip
 ```
 See also [multiple project configurations](https://github.com/kostia/kick-it/wiki/Multiple-project-configurations).
 
+3. Optionally edit global configuration:
+```bash
+kick-it -e
+```
+See also [using local repositories](https://github.com/kostia/kick-it/wiki/Using-local-repositories) and [persisting generated apps](https://github.com/kostia/kick-it/wiki/Persisting-generated-apps).
+
+
 ## Usage
 
 ```bash
-kick-it APP_NAME
+kick-it APP_NAME        # Kick new app
+kick-it APP_NAME -lfq   # Kick new app using local gems, override everything without asking and be quite.
 ```
 
 Full list of CLI options:
@@ -47,14 +57,17 @@ Full list of CLI options:
     -v, --version                    Print the version number
 ```
 
-Full list of configuration options:
+Full list of global configuration keys:
 ```yaml
+# Find me in '~/.config/kick-it/config.yml'.
+# Edit me with 'kick-it -e' command.
+
 # Where to put the generated apps.
 kicks_home: '/tmp/kicks'
 
 # Local respositories for Infopark gems.
 cloud_connector: '/Users/bob/Code/infopark_rails_connector/cloud_connector'
-kickstarter: '/Users/bob/Code/infopark_kickstarter'
+kickstarter:     '/Users/bob/Code/infopark_kickstarter'
 
 # Default options for kicking apps.
 force:                 false # Same as the "-f" CLI option.
