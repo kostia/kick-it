@@ -84,6 +84,7 @@ Take a look at the [Wiki](https://github.com/kostia/kick-it/wiki):
 * [Using local repositories](https://github.com/kostia/kick-it/wiki/Using-local-repositories)
 * [Multiple project configurations](https://github.com/kostia/kick-it/wiki/Multiple-project-configurations)
 * [Persisting generated apps](https://github.com/kostia/kick-it/wiki/Persisting-generated-apps)
+* [Running server in production environment](https://github.com/kostia/kick-it/wiki/Running-server-in-production-environment)
 
 ## License
 
