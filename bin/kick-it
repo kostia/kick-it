@@ -329,15 +329,6 @@ def assert_valid_tenant_name
   end
 end
 
-def git_ignore_project_configs
-  open(File.join(@app_dir, '.gitignore'), 'w') do |f|
-    f.puts %{
-config/rails_connector.yml
-config/custom_cloud.yml
-    }
-  end
-end
-
 def git_commit_application
   sh 'git init'
   sh 'git add -A'
@@ -387,7 +378,6 @@ def generate_app
   create_handlebars_initializer
   copy_project_configs
   assert_valid_tenant_name
-  git_ignore_project_configs
 
   Dir.chdir(@app_dir) do
     bundle_app
