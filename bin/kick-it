@@ -9,11 +9,12 @@ include FileUtils
 VERSION = '0.0.8.4'
 
 def sh(cmd)
-  if @options[:quiet] || @config['quiet']
-    %x{#{cmd}}
-  else
-    puts %x{#{cmd}}
-  end
+  output = %x{#{cmd} 2>&1}
+
+  error(output) unless $?.success?
+
+  quiet = @options[:quiet] || @config['quiet']
+  puts output unless quiet
 end
 
 def supports_colored_output?
