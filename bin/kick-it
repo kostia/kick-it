@@ -7,6 +7,7 @@ require 'yaml'
 include FileUtils
 
 VERSION = '0.0.8.5'
+RAILS_VERSION = '3.2.15' # See https://dev.infopark.net/preparation
 
 def sh(cmd)
   output = %x{#{cmd} 2>&1}
@@ -232,9 +233,13 @@ def cleanup_app_dir
   end
 end
 
+def ensure_rails_installed
+  sh "gem list rails|grep #{RAILS_VERSION} || gem install rails -v #{RAILS_VERSION}"
+end
+
 def generate_rails_app
   Dir.chdir(@kicks_home) do
-    sh "rails _3.2.15_ new #{@app_name} --skip-active-record --skip-bundle"
+    sh "rails _#{RAILS_VERSION}_ new #{@app_name} --skip-active-record --skip-bundle"
   end
 end
 
@@ -371,6 +376,7 @@ end
 def generate_app
   ensure_kicks_home_exists
   cleanup_app_dir
+  ensure_rails_installed
   generate_rails_app
 
   patch_gemfile
