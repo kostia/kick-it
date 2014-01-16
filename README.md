@@ -94,4 +94,4 @@ http://www.infopark.com
 
 ## Version
 
-`0.0.8.5`
+`0.1.0.rc1`
