@@ -6,7 +6,7 @@ require 'yaml'
 
 include FileUtils
 
-VERSION = '0.0.8.4'
+VERSION = '0.0.8.5'
 
 def sh(cmd)
   output = %x{#{cmd} 2>&1}
