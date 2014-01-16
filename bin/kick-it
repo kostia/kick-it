@@ -285,7 +285,6 @@ def patch_gemfile
     if use_anything_local?
       f.puts %{
 group :assets do
-  gem 'less-rails'
   gem 'quiet_assets'
   gem 'underscore-rails'
 end
