@@ -1,13 +1,18 @@
 # Kick it!
 
-Create [Infopark Kickstarter](https://dev.infopark.net/kickstarter) apps with a snap.
+_Create_ [_Infopark Kickstarter_](https://dev.infopark.net/kickstarter) _apps_ _with_ _a_ _snap_...
 
 ![Kick-it](https://raw.github.com/kostia/kick-it/master/kick-it.png)
+
+With [Kick it](https://github.com/infopark/kick-it) you can easily generate new Rails apps based on
+[Infopark Kickstarter](https://dev.infopark.net/kickstarter).
+You can configure them to use gems from your local repos,
+you can select which tenant should be used for which app and much more.
 
 ## Installation
 
 ```bash
-brew tap kostia/infopark # Attention: Repository location may change.
+brew tap kostia/infopark # Attention: the repository location may change.
 brew install kick-it
 ```
 See also https://github.com/kostia/homebrew-infopark.
@@ -21,13 +26,13 @@ For security reasons this project __MUST__ include a special string `kickme` in 
 ```bash
 kick-it -i ~/Downloads/fookickme123-config.zip
 ```
-See also [multiple project configurations](https://github.com/kostia/kick-it/wiki/Multiple-project-configurations).
+See also [multiple project configurations](https://github.com/infopark/kick-it/wiki/Multiple-project-configurations).
 
 3. Optionally edit global configuration:
 ```bash
 kick-it -e
 ```
-See also [using local repositories](https://github.com/kostia/kick-it/wiki/Using-local-repositories) and [persisting generated apps](https://github.com/kostia/kick-it/wiki/Persisting-generated-apps).
+See also [using local repositories](https://github.com/infopark/kick-it/wiki/Using-local-repositories) and [persisting generated apps](https://github.com/infopark/kick-it/wiki/Persisting-generated-apps).
 
 
 ## Usage
@@ -79,12 +84,12 @@ quiet:                 false # Same as the "-q" CLI option.
 
 ## Documentation
 
-Take a look at the [Wiki](https://github.com/kostia/kick-it/wiki):
+Take a look at the [Wiki](https://github.com/infopark/kick-it/wiki):
 
-* [Using local repositories](https://github.com/kostia/kick-it/wiki/Using-local-repositories)
-* [Multiple project configurations](https://github.com/kostia/kick-it/wiki/Multiple-project-configurations)
-* [Persisting generated apps](https://github.com/kostia/kick-it/wiki/Persisting-generated-apps)
-* [Running server in production environment](https://github.com/kostia/kick-it/wiki/Running-server-in-production-environment)
+* [Using local repositories](https://github.com/infopark/kick-it/wiki/Using-local-repositories)
+* [Multiple project configurations](https://github.com/infopark/kick-it/wiki/Multiple-project-configurations)
+* [Persisting generated apps](https://github.com/infopark/kick-it/wiki/Persisting-generated-apps)
+* [Running server in production environment](https://github.com/infopark/kick-it/wiki/Running-server-in-production-environment)
 
 ## License
 
