@@ -1,6 +1,8 @@
 #!/usr/bin/env ruby
 
 require 'fileutils'
+require 'json'
+require 'open-uri'
 require 'optparse'
 require 'yaml'
 
@@ -220,6 +222,17 @@ def parse_options
   options_parser.parse!
 end
 
+def make_joke
+  joke = JSON.parse(open('http://api.icndb.com/jokes/random').read)['value']['joke']
+
+  if joke and joke.size > 0
+    puts %{
+    #{joke.upcase}
+  }
+  end
+rescue
+end
+
 def ensure_kicks_home_exists
   mkdir_p @kicks_home
 end
@@ -374,6 +387,7 @@ def import_config
 end
 
 def generate_app
+  make_joke
   ensure_kicks_home_exists
   cleanup_app_dir
   ensure_rails_installed
