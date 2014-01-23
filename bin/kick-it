@@ -380,7 +380,7 @@ def import_config
                    @config_dir
                  end
     mkdir_p target_dir
-    sh "unzip #{path} -d #{target_dir}"
+    sh "unzip -o #{path} -d #{target_dir}"
   else
     error "Missing '#{path}'."
   end
