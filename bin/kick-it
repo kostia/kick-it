@@ -387,6 +387,7 @@ def import_config
 end
 
 def generate_app
+  parse_app_name
   make_joke
   ensure_kicks_home_exists
   cleanup_app_dir
@@ -420,7 +421,6 @@ ensure_config_file_exists
 load_config
 
 parse_options
-parse_app_name
 
 if @options[:action] == :import
   import_config
