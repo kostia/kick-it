@@ -388,6 +388,10 @@ def run_migrations
   sh 'bundle exec rake cms:migrate'
 end
 
+def publish_migrations
+  sh 'bundle exec rake cms:migrate:publish'
+end
+
 def import_config
   path = @options[:zip_path]
 
@@ -422,6 +426,7 @@ def generate_app
     run_kickstarter_generator
     reset_tenant
     run_migrations
+    publish_migrations
     git_commit_application
   end
 
