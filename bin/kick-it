@@ -303,7 +303,9 @@ def patch_gemfile
     if use_anything_local?
       f.puts %{
 group :assets do
+  gem 'less-rails'
   gem 'quiet_assets'
+  gem 'therubyracer', '~> 0.11.3', :require => 'v8'
   gem 'underscore-rails'
 end
 
