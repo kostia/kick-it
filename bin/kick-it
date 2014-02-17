@@ -363,8 +363,24 @@ def run_kickstarter_generator
 end
 
 def reset_tenant
+  runner_scripts_dir = File.join(@app_dir, 'lib/runner')
+  mkdir_p runner_scripts_dir
+
+  reset_tenant_runner_script = File.join(runner_scripts_dir, 'reset_tenant.rb')
+  open(reset_tenant_runner_script, 'w') do |f|
+    f.puts %q{
+tenant_name = RailsConnector::Configuration.cms_url.match(/\/\/(.*?)\./)[1]
+revision_id = RailsConnector::Workspace.default.revision_id
+
+RailsConnector::CmsRestApi.delete('workspaces', {
+  revision_id: revision_id,
+  tenant_name: tenant_name,
+})
+    }
+  end
+
   confirm 'Reset tenant?' do
-    sh 'bundle exec rake cms:reset[true]'
+    sh "rails runner #{reset_tenant_runner_script}"
   end
 end
 
