@@ -99,4 +99,4 @@ http://www.infopark.com
 
 ## Version
 
-`0.1.4`
+`0.1.5`
