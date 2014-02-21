@@ -132,6 +132,9 @@ local:                 false # Same as the "-l" CLI option.
 local_cloud_connector: false # Same as the "-c" CLI option.
 local_kickstarter:     false # Same as the "-k" CLI option.
 quiet:                 false # Same as the "-q" CLI option.
+
+# You don't really want to change this, unless you want to get roundhouse kicked, bro...
+chuck_norris: true
       }
     end
   end
@@ -223,12 +226,14 @@ def parse_options
 end
 
 def make_joke
-  joke = JSON.parse(open('http://api.icndb.com/jokes/random').read)['value']['joke']
+  if @config['chuck_norris']
+    joke = JSON.parse(open('http://api.icndb.com/jokes/random').read)['value']['joke']
 
-  if joke and joke.size > 0
-    puts %{
-    #{joke.upcase}
-  }
+    if joke and joke.size > 0
+      puts %{
+      #{joke.upcase}
+    }
+    end
   end
 rescue
 end
