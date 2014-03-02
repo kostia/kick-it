@@ -45,7 +45,7 @@ kick-it APP_NAME -lfq   # Kick new app using local gems, override everything wit
 Full list of CLI options:
 ```
   Generate an app:           kick-it APP_NAME [-cklfq] [-p PROJECT_NAME]
-  Open an app:               kick-it -o APP_NAME
+  Open an app:               kick-it -o [APP_NAME]
   Edit global configuration: kick-it -e
   Import project ZIP:        kick-it -i PATH_TO_ZIP [-p PROJECT_NAME]
   Help and version:          kick-it [-hv]
@@ -55,7 +55,7 @@ Full list of CLI options:
     -l, --local                      Use local repos for all Infopark gems
     -f, --force                      Skip all confirmations (assume as confirmed)
     -q, --quiet                      Minimize the output
-    -o, --open-app app_name          Open kicked app in $EDITOR
+    -o, --open-app [app_name]        Open kicked app in $EDITOR or the apps home
     -e, --edit-config                Open configuration file in $EDITOR
     -i, --import path                Import project settings ZIP
     -p, --project project_name       Use alternative project configuration

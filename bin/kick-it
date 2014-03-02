@@ -144,6 +144,7 @@ def load_config
   @config = YAML.load_file(@config_file)
   @kicks_home = @config['kicks_home']
   config_error('kicks_home') unless @kicks_home
+  @kicks_home = File.expand_path(@kicks_home)
 end
 
 def parse_app_name
@@ -161,7 +162,7 @@ def parse_options
   options_parser = OptionParser.new do |opts|
     opts.banner = %{Usage:
   Generate an app:           kick-it APP_NAME [-cklfq] [-p PROJECT_NAME]
-  Open an app:               kick-it -o APP_NAME
+  Open an app:               kick-it -o [APP_NAME]
   Edit global configuration: kick-it -e
   Import project ZIP:        kick-it -i PATH_TO_ZIP [-p PROJECT_NAME]
   Help and version:          kick-it [-hv]
@@ -187,16 +188,21 @@ def parse_options
       @options[:quiet] = true
     end
 
-    opts.on('-o app_name', '--open-app app_name', 'Open kicked app in $EDITOR') do |app_name|
-      app_dir = calculate_app_dir(app_name)
+    opts.on('-o [app_name]', '--open-app [app_name]',
+            'Open kicked app in $EDITOR or the apps home') do |app_name|
+      if app_name
+        app_dir = calculate_app_dir(app_name)
 
-      if File.exists?(app_dir)
-        Dir.chdir(app_dir) do
-          assert_env_var('EDITOR')
-          exec("/usr/bin/env $EDITOR .")
+        if File.exists?(app_dir)
+          Dir.chdir(app_dir) do
+            assert_env_var('EDITOR')
+            exec("/usr/bin/env $EDITOR .")
+          end
+        else
+          error("App '#{app_dir}' doesn't exist.")
         end
       else
-        error("App '#{app_dir}' doesn't exist.")
+        exec("open #{@kicks_home}")
       end
     end
 
