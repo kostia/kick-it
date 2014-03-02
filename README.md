@@ -68,7 +68,7 @@ Full list of global configuration keys:
 # Edit me with 'kick-it -e' command.
 
 # Where to put the generated apps.
-kicks_home: '/tmp/kicks'
+kicks_home: '~/.kick-it'
 
 # Local respositories for Infopark gems.
 cloud_connector: '/Users/bob/Code/infopark_rails_connector/cloud_connector'
@@ -88,7 +88,6 @@ Take a look at the [Wiki](https://github.com/infopark/kick-it/wiki):
 
 * [Using local repositories](https://github.com/infopark/kick-it/wiki/Using-local-repositories)
 * [Multiple project configurations](https://github.com/infopark/kick-it/wiki/Multiple-project-configurations)
-* [Persisting generated apps](https://github.com/infopark/kick-it/wiki/Persisting-generated-apps)
 * [Running server in production environment](https://github.com/infopark/kick-it/wiki/Running-server-in-production-environment)
 
 ## License

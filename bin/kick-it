@@ -115,7 +115,7 @@ def ensure_config_file_exists
 #
 # Where to put the generated apps.
 #
-kicks_home: '/tmp/kicks'
+kicks_home: '~/.kick-it'
 
 #
 # Local respositories for Infopark gems.
