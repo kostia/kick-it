@@ -121,17 +121,17 @@ kicks_home: '~/.kick-it'
 # Local respositories for Infopark gems.
 # Uncomment following to enable usage of local repositories.
 #
-# scrival:     '/Users/bob/Code/rails_connector/scrival'
-# kickstarter: '/Users/bob/Code/infopark_kickstarter'
+# scrival:             '/Users/bob/Code/rails_connector/scrival'
+# scrival_kickstarter: '/Users/bob/Code/scrival_kickstarter'
 
 #
 # Default options for kicking apps.
 #
-force:                 false # Same as the "-f" CLI option.
-local:                 false # Same as the "-l" CLI option.
-local_scrival:         false # Same as the "-c" CLI option.
-local_kickstarter:     false # Same as the "-k" CLI option.
-quiet:                 false # Same as the "-q" CLI option.
+force:                     false # Same as the "-f" CLI option.
+local:                     false # Same as the "-l" CLI option.
+local_scrival:             false # Same as the "-c" CLI option.
+local_scrival_kickstarter: false # Same as the "-k" CLI option.
+quiet:                     false # Same as the "-q" CLI option.
 
 # You don't really want to change this, unless you want to get roundhouse kicked, bro...
 chuck_norris: true
@@ -168,11 +168,11 @@ def parse_options
   Help and version:          kick-it [-hv]
     }
 
-    opts.on('-c', '--local-scrival', 'Use local repo for Infopark Scrival gem') do
+    opts.on('-c', '--local-scrival', 'Use local repo for Scrival gem') do
       @options[:local_cc] = true
     end
 
-    opts.on('-k', '--local-kickstarter', 'Use local repo for Infopark Kickstarter gem') do
+    opts.on('-k', '--local-scrival-kickstarter', 'Use local repo for Scrival Kickstarter gem') do
       @options[:local_ks] = true
     end
 
@@ -278,7 +278,7 @@ end
 
 def use_local_ks?
   @options[:local_ks] || @options[:use_local] ||
-      @config['local_kickstarter'] || @config['local']
+      @config['local_scrival_kickstarter'] || @config['local']
 end
 
 def patch_gemfile
@@ -298,17 +298,17 @@ def patch_gemfile
     end
 
     if use_local_ks?
-      kickstarter_dir = @config['kickstarter']
-      config_error('kickstarter') unless kickstarter_dir
+      kickstarter_dir = @config['scrival_kickstarter']
+      config_error('scrival_kickstarter') unless kickstarter_dir
 
       if File.exists?(kickstarter_dir)
-        info "Using gem 'infopark_kickstarter' from '#{kickstarter_dir}'."
-        f.puts "gem 'infopark_kickstarter', path: '#{kickstarter_dir}'"
+        info "Using gem 'scrival_kickstarter' from '#{kickstarter_dir}'."
+        f.puts "gem 'scrival_kickstarter', path: '#{kickstarter_dir}'"
       else
         error "Missing '#{kickstarter_dir}'."
       end
     else
-      f.puts "gem 'infopark_kickstarter'"
+      f.puts "gem 'scrival_kickstarter'"
     end
 
     if use_anything_local?
@@ -329,7 +329,7 @@ end
 def create_handlebars_initializer
   if use_anything_local?
     open(File.join(@app_dir, 'config/initializers/handbars_assets.rb'), 'w') do |f|
-      f.puts "HandlebarsAssets::Config.template_namespace = 'InfoparkHandlebarsTemplates'"
+      f.puts "HandlebarsAssets::Config.template_namespace = 'ScrivalHandlebarsTemplates'"
     end
   end
 end

@@ -1,11 +1,11 @@
 # Kick it!
 
-_Create_ [_Infopark Kickstarter_](https://dev.infopark.net/kickstarter) _apps_ _with_ _a_ _snap_...
+_Create_ [_Scrival Kickstarter_](https://dev.infopark.net/kickstarter) _apps_ _with_ _a_ _snap_...
 
 ![Kick-it](https://raw.github.com/kostia/kick-it/master/kick-it.png)
 
 With [Kick it](https://github.com/infopark/kick-it) you can easily generate new Rails apps based on
-[Infopark Kickstarter](https://dev.infopark.net/kickstarter).
+[Scrival Kickstarter](https://github.com/infopark/scrival_kickstarter).
 You can configure them to use gems from your local repos,
 you can select which tenant should be used for which app and much more.
 
@@ -50,8 +50,8 @@ Full list of CLI options:
   Import project ZIP:        kick-it -i PATH_TO_ZIP [-p PROJECT_NAME]
   Help and version:          kick-it [-hv]
 
-    -c, --local-scrival              Use local repo for Infopark Scrival gem
-    -k, --local-kickstarter          Use local repo for Infopark Kickstarter gem
+    -c, --local-scrival              Use local repo for Scrival gem
+    -k, --local-scrival-kickstarter  Use local repo for Scrival Kickstarter gem
     -l, --local                      Use local repos for all Infopark gems
     -f, --force                      Skip all confirmations (assume as confirmed)
     -q, --quiet                      Minimize the output
@@ -71,15 +71,15 @@ Full list of global configuration keys:
 kicks_home: '~/.kick-it'
 
 # Local respositories for Infopark gems.
-scrival:     '/Users/bob/Code/rails_connector/scrival'
-kickstarter: '/Users/bob/Code/infopark_kickstarter'
+scrival:             '/Users/bob/Code/rails_connector/scrival'
+scrival_kickstarter: '/Users/bob/Code/scrival_kickstarter'
 
 # Default options for kicking apps.
-force:                 false # Same as the "-f" CLI option.
-local:                 false # Same as the "-l" CLI option.
-local_scrival:         false # Same as the "-c" CLI option.
-local_kickstarter:     false # Same as the "-k" CLI option.
-quiet:                 false # Same as the "-q" CLI option.
+force:                     false # Same as the "-f" CLI option.
+local:                     false # Same as the "-l" CLI option.
+local_scrival:             false # Same as the "-c" CLI option.
+local_scrival_kickstarter: false # Same as the "-k" CLI option.
+quiet:                     false # Same as the "-q" CLI option.
 ```
 
 ## Documentation
