@@ -50,7 +50,7 @@ Full list of CLI options:
   Import project ZIP:        kick-it -i PATH_TO_ZIP [-p PROJECT_NAME]
   Help and version:          kick-it [-hv]
 
-    -c, --local-cloud-connector      Use local repo for Infopark Cloud Connector gem
+    -c, --local-scrival              Use local repo for Infopark Scrival gem
     -k, --local-kickstarter          Use local repo for Infopark Kickstarter gem
     -l, --local                      Use local repos for all Infopark gems
     -f, --force                      Skip all confirmations (assume as confirmed)
@@ -71,13 +71,13 @@ Full list of global configuration keys:
 kicks_home: '~/.kick-it'
 
 # Local respositories for Infopark gems.
-cloud_connector: '/Users/bob/Code/infopark_rails_connector/cloud_connector'
-kickstarter:     '/Users/bob/Code/infopark_kickstarter'
+scrival:     '/Users/bob/Code/rails_connector/scrival'
+kickstarter: '/Users/bob/Code/infopark_kickstarter'
 
 # Default options for kicking apps.
 force:                 false # Same as the "-f" CLI option.
 local:                 false # Same as the "-l" CLI option.
-local_cloud_connector: false # Same as the "-c" CLI option.
+local_scrival:         false # Same as the "-c" CLI option.
 local_kickstarter:     false # Same as the "-k" CLI option.
 quiet:                 false # Same as the "-q" CLI option.
 ```

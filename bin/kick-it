@@ -121,15 +121,15 @@ kicks_home: '~/.kick-it'
 # Local respositories for Infopark gems.
 # Uncomment following to enable usage of local repositories.
 #
-# cloud_connector: '/Users/bob/Code/infopark_rails_connector/cloud_connector'
-# kickstarter:     '/Users/bob/Code/infopark_kickstarter'
+# scrival:     '/Users/bob/Code/rails_connector/scrival'
+# kickstarter: '/Users/bob/Code/infopark_kickstarter'
 
 #
 # Default options for kicking apps.
 #
 force:                 false # Same as the "-f" CLI option.
 local:                 false # Same as the "-l" CLI option.
-local_cloud_connector: false # Same as the "-c" CLI option.
+local_scrival:         false # Same as the "-c" CLI option.
 local_kickstarter:     false # Same as the "-k" CLI option.
 quiet:                 false # Same as the "-q" CLI option.
 
@@ -168,7 +168,7 @@ def parse_options
   Help and version:          kick-it [-hv]
     }
 
-    opts.on('-c', '--local-cloud-connector', 'Use local repo for Infopark Cloud Connector gem') do
+    opts.on('-c', '--local-scrival', 'Use local repo for Infopark Scrival gem') do
       @options[:local_cc] = true
     end
 
@@ -273,7 +273,7 @@ end
 
 def use_local_cc?
   @options[:local_cc] || @options[:use_local] ||
-      @config['local_cloud_connector'] || @config['local']
+      @config['local_scrival'] || @config['local']
 end
 
 def use_local_ks?
@@ -284,17 +284,17 @@ end
 def patch_gemfile
   open(File.join(@app_dir, 'Gemfile'), 'a') do |f|
     if use_local_cc?
-      cloud_connector_dir = @config['cloud_connector']
-      config_error('cloud_connector') unless cloud_connector_dir
+      scrival_dir = @config['scrival']
+      config_error('scrival') unless scrival_dir
 
-      if File.exists?(cloud_connector_dir)
-        info "Using gem 'infopark_cloud_connector' from '#{cloud_connector_dir}'."
-        f.puts "gem 'infopark_cloud_connector', path: '#{cloud_connector_dir}'"
+      if File.exists?(scrival_dir)
+        info "Using gem 'scrival_sdk' from '#{scrival_dir}'."
+        f.puts "gem 'scrival_sdk', path: '#{scrival_dir}'"
       else
-        error "Missing '#{cloud_connector_dir}'."
+        error "Missing '#{scrival_dir}'."
       end
     else
-      f.puts "gem 'infopark_cloud_connector'"
+      f.puts "gem 'scrival_sdk'"
     end
 
     if use_local_ks?
@@ -341,7 +341,7 @@ def copy_project_configs
                  @config_dir
                end
 
-  %w[rails_connector.yml custom_cloud.yml].each do |config_name|
+  %w[scrival.yml custom_cloud.yml].each do |config_name|
     config_file = File.join(config_dir, config_name)
     error("Missing '#{config_file}'.") unless File.exists?(config_file)
     cp config_file, File.join(@app_dir, "config/#{config_name}")
@@ -349,7 +349,7 @@ def copy_project_configs
 end
 
 def assert_valid_tenant_name
-  cms_api_url = YAML.load_file(File.join(@app_dir, 'config/rails_connector.yml'))['cms_api']['url']
+  cms_api_url = YAML.load_file(File.join(@app_dir, 'config/scrival.yml'))['cms_api']['url']
 
   unless cms_api_url.include?('kickme')
     error %{Your project has no "kickme" in the name.
@@ -380,10 +380,10 @@ def reset_tenant
   reset_tenant_runner_script = File.join(runner_scripts_dir, 'reset_tenant.rb')
   open(reset_tenant_runner_script, 'w') do |f|
     f.puts %q{
-tenant_name = RailsConnector::Configuration.cms_url.match(/\/\/(.*?)\./)[1]
-revision_id = RailsConnector::Workspace.default.revision_id
+tenant_name = Scrival::Configuration.cms_url.match(/\/\/(.*?)\./)[1]
+revision_id = Scrival::Workspace.default.revision_id
 
-RailsConnector::CmsRestApi.delete('workspaces', {
+Scrival::CmsRestApi.delete('workspaces', {
   revision_id: revision_id,
   tenant_name: tenant_name,
 })
