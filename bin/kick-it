@@ -322,6 +322,7 @@ end
 
 gem 'handlebars_assets', '~> 0.12.0'
 gem 'pry-rails'
+gem 'thin'
       }
     end
   end
