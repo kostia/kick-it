@@ -123,6 +123,7 @@ kicks_home: '~/.kick-it'
 #
 # scrival:             '/Users/bob/Code/rails_connector/scrival'
 # scrival_kickstarter: '/Users/bob/Code/scrival_kickstarter'
+# scrival_editors:     '/Users/bob/Code/scrival_editors'
 
 #
 # Default options for kicking apps.
@@ -131,6 +132,7 @@ force:                     false # Same as the "-f" CLI option.
 local:                     false # Same as the "-l" CLI option.
 local_scrival:             false # Same as the "-c" CLI option.
 local_scrival_kickstarter: false # Same as the "-k" CLI option.
+local_scrival_editors:     false # Same as the "-z" CLI option.
 quiet:                     false # Same as the "-q" CLI option.
 
 # You don't really want to change this, unless you want to get roundhouse kicked, bro...
@@ -161,7 +163,7 @@ def parse_options
 
   options_parser = OptionParser.new do |opts|
     opts.banner = %{Usage:
-  Generate an app:           kick-it APP_NAME [-cklfq] [-p PROJECT_NAME]
+  Generate an app:           kick-it APP_NAME [-cklfqz] [-p PROJECT_NAME]
   Open an app:               kick-it -o [APP_NAME]
   Edit global configuration: kick-it -e
   Import project ZIP:        kick-it -i PATH_TO_ZIP [-p PROJECT_NAME]
@@ -174,6 +176,10 @@ def parse_options
 
     opts.on('-k', '--local-scrival-kickstarter', 'Use local repo for Scrival Kickstarter gem') do
       @options[:local_ks] = true
+    end
+
+    opts.on('-z', '--local-scrival-editors', 'Use local repo for Scrival Editors gem') do
+      @options[:local_ke] = true
     end
 
     opts.on('-l', '--local', 'Use local repos for all Infopark gems') do
@@ -268,7 +274,7 @@ def generate_rails_app
 end
 
 def use_anything_local?
-  use_local_cc? || use_local_ks?
+  use_local_cc? || use_local_ks? || use_local_ke?
 end
 
 def use_local_cc?
@@ -279,6 +285,11 @@ end
 def use_local_ks?
   @options[:local_ks] || @options[:use_local] ||
       @config['local_scrival_kickstarter'] || @config['local']
+end
+
+def use_local_ke?
+  @options[:local_ke] || @options[:use_local] ||
+      @config['local_scrival_editors'] || @config['local']
 end
 
 def patch_gemfile
@@ -309,6 +320,20 @@ def patch_gemfile
       end
     else
       f.puts "gem 'scrival_kickstarter'"
+    end
+
+    if use_local_ke?
+      editors_dir = @config['scrival_editors']
+      config_error('scrival_editors') unless editors_dir
+
+      if File.exists?(editors_dir)
+        info "Using gem 'scrival_editors' from '#{editors_dir}'."
+        f.puts "gem 'scrival_editors', path: '#{editors_dir}'"
+      else
+        error "Missing '#{editors_dir}'."
+      end
+    else
+      f.puts "gem 'scrival_editors'"
     end
 
     if use_anything_local?
