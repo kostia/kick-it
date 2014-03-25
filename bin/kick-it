@@ -338,18 +338,15 @@ def patch_gemfile
 
     if use_anything_local?
       f.puts %{
-group :assets do
-  gem 'less-rails'
-  gem 'quiet_assets'
-  gem 'therubyracer', require: 'v8'
-  gem 'underscore-rails'
-end
-
 gem 'handlebars_assets', '~> 0.12.0'
+gem 'less-rails'
 gem 'pry-rails'
 gem 'pry-rescue'
 gem 'pry-stack_explorer'
+gem 'quiet_assets'
+gem 'therubyracer', require: 'v8'
 gem 'thin'
+gem 'underscore-rails'
       }
     end
   end
