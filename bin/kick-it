@@ -376,9 +376,9 @@ def copy_project_configs
 end
 
 def assert_valid_tenant_name
-  cms_api_url = YAML.load_file(File.join(@app_dir, 'config/scrival.yml'))['cms_api']['url']
+  tenant_name = YAML.load_file(File.join(@app_dir, 'config/scrival.yml'))['tenant']
 
-  unless cms_api_url.include?('kickme')
+  unless tenant_name.include?('kickme')
     error %{Your project has no "kickme" in the name.
       For security reasons a project used with this tool MUST include a special string "kickme" in it's name, e.g. "fookickme123".
       See documentation for more details: https://github.com/infopark/kick-it.
@@ -407,12 +407,9 @@ def reset_tenant
   reset_tenant_runner_script = File.join(runner_scripts_dir, 'reset_tenant.rb')
   open(reset_tenant_runner_script, 'w') do |f|
     f.puts %q{
-tenant_name = Scrival::Configuration.cms_url.match(/\/\/(.*?)\./)[1]
-revision_id = Scrival::Workspace.default.revision_id
-
 Scrival::CmsRestApi.delete('workspaces', {
-  revision_id: revision_id,
-  tenant_name: tenant_name,
+  tenant_name: Scrival::Configuration.tenant,
+  revision_id: Scrival::Workspace.default.revision_id,
 })
     }
   end
