@@ -368,11 +368,9 @@ def copy_project_configs
                  @config_dir
                end
 
-  %w[scrival.yml custom_cloud.yml].each do |config_name|
-    config_file = File.join(config_dir, config_name)
-    error("Missing '#{config_file}'.") unless File.exists?(config_file)
-    cp config_file, File.join(@app_dir, "config/#{config_name}")
-  end
+  scrival_yml = File.join(config_dir, 'scrival.yml')
+  error("Missing '#{config_file}'.") unless File.exists?(scrival_yml)
+  cp scrival_yml, File.join(@app_dir, 'config/scrival.yml')
 end
 
 def assert_valid_tenant_name
