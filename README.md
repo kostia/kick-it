@@ -15,6 +15,7 @@ you can select which tenant should be used for which app and much more.
 brew tap kostia/infopark # Attention: the repository location may change.
 brew install kick-it
 ```
+
 See also https://github.com/kostia/homebrew-infopark.
 
 ## Configuration
@@ -74,6 +75,7 @@ kicks_home: '~/.kick-it'
 # Local respositories for Infopark gems.
 scrival:             '/Users/bob/Code/rails_connector/scrival'
 scrival_kickstarter: '/Users/bob/Code/scrival_kickstarter'
+scrival_editors:     '/Users/bob/Code/scrival_editors'
 
 # Default options for kicking apps.
 force:                     false # Same as the "-f" CLI option.
