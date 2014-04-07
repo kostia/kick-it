@@ -44,7 +44,7 @@ kick-it APP_NAME -lfq   # Kick new app using local gems, override everything wit
 
 Full list of CLI options:
 ```
-  Generate an app:           kick-it APP_NAME [-cklfq] [-p PROJECT_NAME]
+  Generate an app:           kick-it APP_NAME [-cklfqz] [-p PROJECT_NAME]
   Open an app:               kick-it -o [APP_NAME]
   Edit global configuration: kick-it -e
   Import project ZIP:        kick-it -i PATH_TO_ZIP [-p PROJECT_NAME]
@@ -52,6 +52,7 @@ Full list of CLI options:
 
     -c, --local-scrival              Use local repo for Scrival gem
     -k, --local-scrival-kickstarter  Use local repo for Scrival Kickstarter gem
+    -z, --local-scrival-editors      Use local repo for Scrival Editors gem
     -l, --local                      Use local repos for all Infopark gems
     -f, --force                      Skip all confirmations (assume as confirmed)
     -q, --quiet                      Minimize the output
@@ -79,6 +80,7 @@ force:                     false # Same as the "-f" CLI option.
 local:                     false # Same as the "-l" CLI option.
 local_scrival:             false # Same as the "-c" CLI option.
 local_scrival_kickstarter: false # Same as the "-k" CLI option.
+local_scrival_editor:      false # Same as the "-z" CLI option.
 quiet:                     false # Same as the "-q" CLI option.
 ```
 
