@@ -1,11 +1,10 @@
 # Kick it!
 
-_Create_ [_Scrival Kickstarter_](https://dev.infopark.net/kickstarter) _apps_ _with_ _a_ _snap_...
+_Create_ [_Scrival_](https://scrival.com) _apps_ _with_ _a_ _snap_...
 
 ![Kick-it](https://raw.github.com/kostia/kick-it/master/kick-it.png)
 
-With [Kick it](https://github.com/infopark/kick-it) you can easily generate new Rails apps based on
-[Scrival Kickstarter](https://github.com/infopark/scrival_kickstarter).
+With [Kick it](https://github.com/infopark/kick-it) you can easily generate new Scrival apps.
 You can configure them to use gems from your local repos,
 you can select which tenant should be used for which app and much more.
 
@@ -20,7 +19,7 @@ See also https://github.com/kostia/homebrew-infopark.
 
 ## Configuration
 
-1. Create a new project at https://console.infopark.net/ with a CMS and a CRM (see [this article](https://dev.infopark.net/getting-started) for details).
+1. Create a new project (see https://scrival.com/getting-started for details).
 For security reasons this project __MUST__ include a special string `kickme` in it's name, e.g. `fookickme123`.
 
 2. Download and import the configuration ZIP:
