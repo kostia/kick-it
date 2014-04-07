@@ -93,6 +93,7 @@ Take a look at the [Wiki](https://github.com/infopark/kick-it/wiki):
 * [Using local repositories](https://github.com/infopark/kick-it/wiki/Using-local-repositories)
 * [Multiple project configurations](https://github.com/infopark/kick-it/wiki/Multiple-project-configurations)
 * [Running server in production environment](https://github.com/infopark/kick-it/wiki/Running-server-in-production-environment)
+* [Visual dialog](https://github.com/infopark/kick-it/wiki/Visual-dialog)
 
 ## License
 
