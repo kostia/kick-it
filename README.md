@@ -32,7 +32,7 @@ See also [multiple project configurations](https://github.com/infopark/kick-it/w
 ```bash
 kick-it -e
 ```
-See also [using local repositories](https://github.com/infopark/kick-it/wiki/Using-local-repositories) and [persisting generated apps](https://github.com/infopark/kick-it/wiki/Persisting-generated-apps).
+See also [using local repositories](https://github.com/infopark/kick-it/wiki/Using-local-repositories).
 
 
 ## Usage
