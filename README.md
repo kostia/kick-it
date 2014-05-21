@@ -1,10 +1,10 @@
 # Kick it!
 
-_Create_ [_Scrival_](https://scrival.com) _apps_ _with_ _a_ _snap_...
+_Create_ [_scrivito_](https://scrivito.com) _apps_ _with_ _a_ _snap_...
 
 ![Kick-it](https://raw.github.com/kostia/kick-it/master/kick-it.png)
 
-With [Kick it](https://github.com/infopark/kick-it) you can easily generate new Scrival apps.
+With [Kick it](https://github.com/infopark/kick-it) you can easily generate new scrivito apps.
 You can configure them to use gems from your local repos,
 you can select which tenant should be used for which app and much more.
 
@@ -19,7 +19,7 @@ See also https://github.com/kostia/homebrew-infopark.
 
 ## Configuration
 
-1. Create a new project (see https://scrival.com/getting-started for details).
+1. Create a new project (see https://scrivito.com/getting-started for details).
 For security reasons this project __MUST__ include a special string `kickme` in it's name, e.g. `fookickme123`.
 
 2. Download and import the configuration ZIP:
@@ -50,9 +50,9 @@ Full list of CLI options:
   Import project ZIP:        kick-it -i PATH_TO_ZIP [-p PROJECT_NAME]
   Help and version:          kick-it [-hv]
 
-    -c, --local-scrival              Use local repo for Scrival gem
-    -k, --local-scrival-kickstarter  Use local repo for Scrival Kickstarter gem
-    -z, --local-scrival-editors      Use local repo for Scrival Editors gem
+    -c, --local-scrivito              Use local repo for scrivito gem
+    -k, --local-scrivito-kickstarter  Use local repo for scrivito Kickstarter gem
+    -z, --local-scrivito-editors      Use local repo for scrivito Editors gem
     -l, --local                      Use local repos for all Infopark gems
     -f, --force                      Skip all confirmations (assume as confirmed)
     -q, --quiet                      Minimize the output
@@ -72,16 +72,16 @@ Full list of global configuration keys:
 kicks_home: '~/.kick-it'
 
 # Local respositories for Infopark gems.
-scrival:             '/Users/bob/Code/rails_connector/scrival'
-scrival_kickstarter: '/Users/bob/Code/scrival_kickstarter'
-scrival_editors:     '/Users/bob/Code/scrival_editors'
+scrivito:             '/Users/bob/Code/rails_connector/scrivito'
+scrivito_kickstarter: '/Users/bob/Code/scrivito_kickstarter'
+scrivito_editors:     '/Users/bob/Code/scrivito_editors'
 
 # Default options for kicking apps.
 force:                     false # Same as the "-f" CLI option.
 local:                     false # Same as the "-l" CLI option.
-local_scrival:             false # Same as the "-c" CLI option.
-local_scrival_kickstarter: false # Same as the "-k" CLI option.
-local_scrival_editor:      false # Same as the "-z" CLI option.
+local_scrivito:             false # Same as the "-c" CLI option.
+local_scrivito_kickstarter: false # Same as the "-k" CLI option.
+local_scrivito_editor:      false # Same as the "-z" CLI option.
 quiet:                     false # Same as the "-q" CLI option.
 ```
 

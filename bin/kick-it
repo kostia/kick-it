@@ -121,18 +121,18 @@ kicks_home: '~/.kick-it'
 # Local respositories for Infopark gems.
 # Uncomment following to enable usage of local repositories.
 #
-# scrival:             '/Users/bob/Code/rails_connector/scrival'
-# scrival_kickstarter: '/Users/bob/Code/scrival_kickstarter'
-# scrival_editors:     '/Users/bob/Code/scrival_editors'
+# scrivito:             '/Users/bob/Code/rails_connector/scrivito'
+# scrivito_kickstarter: '/Users/bob/Code/scrivito_kickstarter'
+# scrivito_editors:     '/Users/bob/Code/scrivito_editors'
 
 #
 # Default options for kicking apps.
 #
 force:                     false # Same as the "-f" CLI option.
 local:                     false # Same as the "-l" CLI option.
-local_scrival:             false # Same as the "-c" CLI option.
-local_scrival_kickstarter: false # Same as the "-k" CLI option.
-local_scrival_editors:     false # Same as the "-z" CLI option.
+local_scrivito:             false # Same as the "-c" CLI option.
+local_scrivito_kickstarter: false # Same as the "-k" CLI option.
+local_scrivito_editors:     false # Same as the "-z" CLI option.
 quiet:                     false # Same as the "-q" CLI option.
 
 # You don't really want to change this, unless you want to get roundhouse kicked, bro...
@@ -170,15 +170,15 @@ def parse_options
   Help and version:          kick-it [-hv]
     }
 
-    opts.on('-c', '--local-scrival', 'Use local repo for Scrival gem') do
+    opts.on('-c', '--local-scrivito', 'Use local repo for scrivito gem') do
       @options[:local_cc] = true
     end
 
-    opts.on('-k', '--local-scrival-kickstarter', 'Use local repo for Scrival Kickstarter gem') do
+    opts.on('-k', '--local-scrivito-kickstarter', 'Use local repo for scrivito Kickstarter gem') do
       @options[:local_ks] = true
     end
 
-    opts.on('-z', '--local-scrival-editors', 'Use local repo for Scrival Editors gem') do
+    opts.on('-z', '--local-scrivito-editors', 'Use local repo for scrivito Editors gem') do
       @options[:local_ke] = true
     end
 
@@ -279,61 +279,61 @@ end
 
 def use_local_cc?
   @options[:local_cc] || @options[:use_local] ||
-      @config['local_scrival'] || @config['local']
+      @config['local_scrivito'] || @config['local']
 end
 
 def use_local_ks?
   @options[:local_ks] || @options[:use_local] ||
-      @config['local_scrival_kickstarter'] || @config['local']
+      @config['local_scrivito_kickstarter'] || @config['local']
 end
 
 def use_local_ke?
   @options[:local_ke] || @options[:use_local] ||
-      @config['local_scrival_editors'] || @config['local']
+      @config['local_scrivito_editors'] || @config['local']
 end
 
 def patch_gemfile
   open(File.join(@app_dir, 'Gemfile'), 'a') do |f|
     if use_local_cc?
-      scrival_dir = @config['scrival']
-      config_error('scrival') unless scrival_dir
+      scrivito_dir = @config['scrivito']
+      config_error('scrivito') unless scrivito_dir
 
-      if File.exists?(scrival_dir)
-        info "Using gem 'scrival_sdk' from '#{scrival_dir}'."
-        f.puts "gem 'scrival_sdk', path: '#{scrival_dir}'"
+      if File.exists?(scrivito_dir)
+        info "Using gem 'scrivito_sdk' from '#{scrivito_dir}'."
+        f.puts "gem 'scrivito_sdk', path: '#{scrivito_dir}'"
       else
-        error "Missing '#{scrival_dir}'."
+        error "Missing '#{scrivito_dir}'."
       end
     else
-      f.puts "gem 'scrival_sdk'"
+      f.puts "gem 'scrivito_sdk'"
     end
 
     if use_local_ks?
-      kickstarter_dir = @config['scrival_kickstarter']
-      config_error('scrival_kickstarter') unless kickstarter_dir
+      kickstarter_dir = @config['scrivito_kickstarter']
+      config_error('scrivito_kickstarter') unless kickstarter_dir
 
       if File.exists?(kickstarter_dir)
-        info "Using gem 'scrival_kickstarter' from '#{kickstarter_dir}'."
-        f.puts "gem 'scrival_kickstarter', path: '#{kickstarter_dir}'"
+        info "Using gem 'scrivito_kickstarter' from '#{kickstarter_dir}'."
+        f.puts "gem 'scrivito_kickstarter', path: '#{kickstarter_dir}'"
       else
         error "Missing '#{kickstarter_dir}'."
       end
     else
-      f.puts "gem 'scrival_kickstarter'"
+      f.puts "gem 'scrivito_kickstarter'"
     end
 
     if use_local_ke?
-      editors_dir = @config['scrival_editors']
-      config_error('scrival_editors') unless editors_dir
+      editors_dir = @config['scrivito_editors']
+      config_error('scrivito_editors') unless editors_dir
 
       if File.exists?(editors_dir)
-        info "Using gem 'scrival_editors' from '#{editors_dir}'."
-        f.puts "gem 'scrival_editors', path: '#{editors_dir}'"
+        info "Using gem 'scrivito_editors' from '#{editors_dir}'."
+        f.puts "gem 'scrivito_editors', path: '#{editors_dir}'"
       else
         error "Missing '#{editors_dir}'."
       end
     else
-      f.puts "gem 'scrival_editors'"
+      f.puts "gem 'scrivito_editors'"
     end
 
     if use_anything_local?
@@ -356,7 +356,7 @@ end
 def create_handlebars_initializer
   if use_anything_local?
     open(File.join(@app_dir, 'config/initializers/handbars_assets.rb'), 'w') do |f|
-      f.puts "HandlebarsAssets::Config.template_namespace = 'ScrivalHandlebarsTemplates'"
+      f.puts "HandlebarsAssets::Config.template_namespace = 'ScrivitoHandlebarsTemplates'"
     end
   end
 end
@@ -368,13 +368,13 @@ def copy_project_configs
                  @config_dir
                end
 
-  scrival_yml = File.join(config_dir, 'scrival.yml')
-  error("Missing '#{config_file}'.") unless File.exists?(scrival_yml)
-  cp scrival_yml, File.join(@app_dir, 'config/scrival.yml')
+  scrivito_yml = File.join(config_dir, 'scrivito.yml')
+  error("Missing '#{config_file}'.") unless File.exists?(scrivito_yml)
+  cp scrivito_yml, File.join(@app_dir, 'config/scrivito.yml')
 end
 
 def assert_valid_tenant_name
-  tenant_name = YAML.load_file(File.join(@app_dir, 'config/scrival.yml'))['tenant']
+  tenant_name = YAML.load_file(File.join(@app_dir, 'config/scrivito.yml'))['tenant']
 
   unless tenant_name.include?('kickme')
     error %{Your project has no "kickme" in the name.
@@ -405,9 +405,9 @@ def reset_tenant
   reset_tenant_runner_script = File.join(runner_scripts_dir, 'reset_tenant.rb')
   open(reset_tenant_runner_script, 'w') do |f|
     f.puts %q{
-Scrival::CmsRestApi.delete('workspaces', {
-  tenant_name: Scrival::Configuration.tenant,
-  revision_id: Scrival::Workspace.default.revision_id,
+Scrivito::CmsRestApi.delete('workspaces', {
+  tenant_name: Scrivito::Configuration.tenant,
+  revision_id: Scrivito::Workspace.default.revision_id,
 })
     }
   end
