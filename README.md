@@ -33,16 +33,13 @@ kick-it APP_NAME -lfq   # Kick new app using local gems, override everything wit
 
 Full list of CLI options:
 ```
-  Generate an app:           kick-it APP_NAME [-cklfqz] [-p PROJECT_NAME]
+  Generate an app:           kick-it APP_NAME [-lfq] [-p PROJECT_NAME]
   Open an app:               kick-it -o [APP_NAME]
   Edit global configuration: kick-it -e
   Import project ZIP:        kick-it -i PATH_TO_ZIP [-p PROJECT_NAME]
   Help and version:          kick-it [-hv]
 
-    -c, --local-scrivito              Use local repo for scrivito gem
-    -k, --local-scrivito-kickstarter  Use local repo for scrivito Kickstarter gem
-    -z, --local-scrivito-editors      Use local repo for scrivito Editors gem
-    -l, --local                      Use local repos for all Infopark gems
+    -l, --local                      Use local repos for all Infopark gems (specify the gems in the config)
     -f, --force                      Skip all confirmations (assume as confirmed)
     -q, --quiet                      Minimize the output
     -o, --open-app [app_name]        Open kicked app in $EDITOR or the apps home
@@ -61,17 +58,19 @@ Full list of global configuration keys:
 kicks_home: '~/.kick-it'
 
 # Local respositories for Infopark gems.
-scrivito:             '/Users/bob/Code/rails_connector/scrivito'
-scrivito_kickstarter: '/Users/bob/Code/scrivito_kickstarter'
-scrivito_editors:     '/Users/bob/Code/scrivito_editors'
+scrivito:                 '/Users/bob/Code/rails_connector/scrivito'
+scrivito_kickstarter:     '/Users/bob/Code/scrivito_kickstarter'
+scrivito_editors:         '/Users/bob/Code/scrivito_editors'
+scrivito_resourcebrowser: '/Users/bob/Code/scrivito_resourcebrowser'
 
 # Default options for kicking apps.
-force:                     false # Same as the "-f" CLI option.
-local:                     false # Same as the "-l" CLI option.
-local_scrivito:             false # Same as the "-c" CLI option.
-local_scrivito_kickstarter: false # Same as the "-k" CLI option.
-local_scrivito_editor:      false # Same as the "-z" CLI option.
-quiet:                     false # Same as the "-q" CLI option.
+force:                          false # Same as the "-f" CLI option.
+local:                          false # Same as the "-l" CLI option.
+local_scrivito:                 false #
+local_scrivito_kickstarter:     false #
+local_scrivito_editor:          false #
+local_scrivito_resourcebrowser: false #
+quiet:                          false # Same as the "-q" CLI option.
 ```
 
 ## Documentation

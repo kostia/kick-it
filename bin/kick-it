@@ -121,19 +121,20 @@ kicks_home: '~/.kick-it'
 # Local respositories for Infopark gems.
 # Uncomment following to enable usage of local repositories.
 #
-# scrivito:             '/Users/bob/Code/rails_connector/scrivito'
-# scrivito_kickstarter: '/Users/bob/Code/scrivito_kickstarter'
-# scrivito_editors:     '/Users/bob/Code/scrivito_editors'
+# scrivito:                 '/Users/bob/Code/rails_connector/scrivito'
+# scrivito_kickstarter:     '/Users/bob/Code/scrivito_kickstarter'
+# scrivito_editors:         '/Users/bob/Code/scrivito_editors'
+# scrivito_resourcebrowser: '/Users/bob/Code/scrivito_resourcebrowser'
 
 #
 # Default options for kicking apps.
 #
-force:                     false # Same as the "-f" CLI option.
-local:                     false # Same as the "-l" CLI option.
-local_scrivito:             false # Same as the "-c" CLI option.
-local_scrivito_kickstarter: false # Same as the "-k" CLI option.
-local_scrivito_editors:     false # Same as the "-z" CLI option.
-quiet:                     false # Same as the "-q" CLI option.
+force:                          false # Same as the "-f" CLI option.
+local:                          false # Same as the "-l" CLI option.
+local_scrivito_kickstarter:     false #
+local_scrivito_editors:         false #
+local_scrivito_resourcebrowser: false #
+quiet:                          false # Same as the "-q" CLI option.
 
 # You don't really want to change this, unless you want to get roundhouse kicked, bro...
 chuck_norris: true
@@ -163,27 +164,15 @@ def parse_options
 
   options_parser = OptionParser.new do |opts|
     opts.banner = %{Usage:
-  Generate an app:           kick-it APP_NAME [-cklfqz] [-p PROJECT_NAME]
+  Generate an app:           kick-it APP_NAME [-lfq] [-p PROJECT_NAME]
   Open an app:               kick-it -o [APP_NAME]
   Edit global configuration: kick-it -e
   Import project ZIP:        kick-it -i PATH_TO_ZIP [-p PROJECT_NAME]
   Help and version:          kick-it [-hv]
     }
 
-    opts.on('-c', '--local-scrivito', 'Use local repo for scrivito gem') do
-      @options[:local_cc] = true
-    end
-
-    opts.on('-k', '--local-scrivito-kickstarter', 'Use local repo for scrivito Kickstarter gem') do
-      @options[:local_ks] = true
-    end
-
-    opts.on('-z', '--local-scrivito-editors', 'Use local repo for scrivito Editors gem') do
-      @options[:local_ke] = true
-    end
-
     opts.on('-l', '--local', 'Use local repos for all Infopark gems') do
-      @options[:use_local] = true
+      @options[:local] = true
     end
 
     opts.on('-f', '--force', 'Skip all confirmations (assume as confirmed)') do
@@ -274,27 +263,28 @@ def generate_rails_app
 end
 
 def use_anything_local?
-  use_local_cc? || use_local_ks? || use_local_ke?
+  use_local_sdk? || use_local_kickstarter? || use_local_editors? || use_local_resourcebrowser?
 end
 
-def use_local_cc?
-  @options[:local_cc] || @options[:use_local] ||
-      @config['local_scrivito'] || @config['local']
+def use_local_sdk?
+  @config['local_scrivito'] || @config['local']
 end
 
-def use_local_ks?
-  @options[:local_ks] || @options[:use_local] ||
-      @config['local_scrivito_kickstarter'] || @config['local']
+def use_local_kickstarter?
+  @config['local_scrivito_kickstarter'] || @config['local']
 end
 
-def use_local_ke?
-  @options[:local_ke] || @options[:use_local] ||
-      @config['local_scrivito_editors'] || @config['local']
+def use_local_editors?
+  @config['local_scrivito_editors'] || @config['local']
+end
+
+def use_local_resourcebrowser?
+  @config['local_scrivito_resourcebrowser'] || @config['local']
 end
 
 def patch_gemfile
   open(File.join(@app_dir, 'Gemfile'), 'a') do |f|
-    if use_local_cc?
+    if use_local_sdk?
       scrivito_dir = @config['scrivito']
       config_error('scrivito') unless scrivito_dir
 
@@ -308,7 +298,7 @@ def patch_gemfile
       f.puts "gem 'scrivito_sdk'"
     end
 
-    if use_local_ks?
+    if use_local_kickstarter?
       kickstarter_dir = @config['scrivito_kickstarter']
       config_error('scrivito_kickstarter') unless kickstarter_dir
 
@@ -322,7 +312,7 @@ def patch_gemfile
       f.puts "gem 'scrivito_kickstarter'"
     end
 
-    if use_local_ke?
+    if use_local_editors?
       editors_dir = @config['scrivito_editors']
       config_error('scrivito_editors') unless editors_dir
 
@@ -334,6 +324,18 @@ def patch_gemfile
       end
     else
       f.puts "gem 'scrivito_editors'"
+    end
+
+    if use_local_resourcebrowser?
+      resourcebrowser_dir = @config['scrivito_resourcebrowser']
+      config_error('resourcebrowser_editors') unless resourcebrowser_dir
+
+      if File.exists?(resourcebrowser_dir)
+        info "Using gem 'scrivito_resourcebrowser' from '#{resourcebrowser_dir}'."
+        f.puts "gem 'scrivito_resourcebrowser', path: '#{resourcebrowser_dir}'"
+      else
+        error "Missing '#{resourcebrowser_dir}'."
+      end
     end
 
     if use_anything_local?
