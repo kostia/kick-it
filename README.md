@@ -64,13 +64,9 @@ scrivito_editors:         '/Users/bob/Code/scrivito_editors'
 scrivito_resourcebrowser: '/Users/bob/Code/scrivito_resourcebrowser'
 
 # Default options for kicking apps.
-force:                          false # Same as the "-f" CLI option.
-local:                          false # Same as the "-l" CLI option.
-local_scrivito:                 false #
-local_scrivito_kickstarter:     false #
-local_scrivito_editor:          false #
-local_scrivito_resourcebrowser: false #
-quiet:                          false # Same as the "-q" CLI option.
+force: false # Same as the "-f" CLI option.
+local: false # Same as the "-l" CLI option.
+quiet: false # Same as the "-q" CLI option.
 ```
 
 ## Documentation

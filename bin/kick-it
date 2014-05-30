@@ -129,12 +129,9 @@ kicks_home: '~/.kick-it'
 #
 # Default options for kicking apps.
 #
-force:                          false # Same as the "-f" CLI option.
-local:                          false # Same as the "-l" CLI option.
-local_scrivito_kickstarter:     false #
-local_scrivito_editors:         false #
-local_scrivito_resourcebrowser: false #
-quiet:                          false # Same as the "-q" CLI option.
+force: false # Same as the "-f" CLI option.
+local: false # Same as the "-l" CLI option.
+quiet: false # Same as the "-q" CLI option.
 
 # You don't really want to change this, unless you want to get roundhouse kicked, bro...
 chuck_norris: true
@@ -267,19 +264,19 @@ def use_anything_local?
 end
 
 def use_local_sdk?
-  @config['local_scrivito'] || @config['local']
+  @config['scrivito'] || @config['local']
 end
 
 def use_local_kickstarter?
-  @config['local_scrivito_kickstarter'] || @config['local']
+  @config['scrivito_kickstarter'] || @config['local']
 end
 
 def use_local_editors?
-  @config['local_scrivito_editors'] || @config['local']
+  @config['scirivito_editors'] || @config['local']
 end
 
 def use_local_resourcebrowser?
-  @config['local_scrivito_resourcebrowser'] || @config['local']
+  @config['scrivito_resourcebrowser'] || @config['local']
 end
 
 def patch_gemfile
