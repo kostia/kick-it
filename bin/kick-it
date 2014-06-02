@@ -16,7 +16,7 @@ def sh(cmd)
 
   error(output) unless $?.success?
 
-  quiet = @options[:quiet] || @config['quiet']
+  quiet = @config['quiet']
   puts output unless quiet
 end
 
@@ -51,7 +51,7 @@ def prompt(label, alt)
 end
 
 def confirm(label)
-  if @options[:autoconfirm] || @config['force']
+  if @config['force']
     yield if block_given?
   else
     case prompt("#{label} [Y/n]: ", 'y').downcase
@@ -157,8 +157,6 @@ def parse_app_name
 end
 
 def parse_options
-  @options = {}
-
   options_parser = OptionParser.new do |opts|
     opts.banner = %{Usage:
   Generate an app:           kick-it APP_NAME [-lfq] [-p PROJECT_NAME]
@@ -169,15 +167,15 @@ def parse_options
     }
 
     opts.on('-l', '--local', 'Use local repos for all Infopark gems') do
-      @options[:local] = true
+      @config['local'] = true
     end
 
     opts.on('-f', '--force', 'Skip all confirmations (assume as confirmed)') do
-      @options[:autoconfirm] = true
+      @config['force'] = true
     end
 
     opts.on('-q', '--quiet', 'Minimize the output') do
-      @options[:quiet] = true
+      @config['quiet'] = true
     end
 
     opts.on('-o [app_name]', '--open-app [app_name]',
@@ -204,14 +202,14 @@ def parse_options
     end
 
     opts.on('-i path', '--import path', 'Import project settings ZIP') do |path|
-      @options[:action] = :import
-      @options[:zip_path] = path
+      @config['action'] = :import
+      @config['zip_path'] = path
     end
 
     opts.on('-p project_name', '--project project_name',
         'Use alternative project configuration') do |project_name|
       info "Using project '#{project_name}'."
-      @options[:project_name] = project_name
+      @config['project_name'] = project_name
     end
 
     opts.on('-v', '--version', 'Print the version number') do
@@ -272,7 +270,7 @@ def use_local_kickstarter?
 end
 
 def use_local_editors?
-  @config['scirivito_editors'] || @config['local']
+  @config['scrivito_editors'] || @config['local']
 end
 
 def use_local_resourcebrowser?
@@ -361,7 +359,7 @@ def create_handlebars_initializer
 end
 
 def copy_project_configs
-  config_dir = if project_name = @options[:project_name]
+  config_dir = if project_name = @config['project_name']
                  File.join(@config_dir, project_name)
                else
                  @config_dir
@@ -425,10 +423,10 @@ def publish_migrations
 end
 
 def import_config
-  path = @options[:zip_path]
+  path = @config['zip_path']
 
   if File.exists?(path)
-    target_dir = if project_name = @options[:project_name]
+    target_dir = if project_name = @config['project_name']
                    File.join(@config_dir, project_name)
                  else
                    @config_dir
@@ -477,7 +475,7 @@ load_config
 
 parse_options
 
-if @options[:action] == :import
+if @config['action'] == :import
   import_config
 else
   generate_app
