@@ -323,7 +323,7 @@ def patch_gemfile
 
     if use_local_resourcebrowser?
       resourcebrowser_dir = @config['scrivito_resourcebrowser']
-      config_error('resourcebrowser_editors') unless resourcebrowser_dir
+      config_error('scrivito_resourcebrowser') unless resourcebrowser_dir
 
       if File.exists?(resourcebrowser_dir)
         info "Using gem 'scrivito_resourcebrowser' from '#{resourcebrowser_dir}'."
