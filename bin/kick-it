@@ -9,7 +9,7 @@ require 'yaml'
 include FileUtils
 
 VERSION = '0.4.1'
-RAILS_VERSION = '4.1.1' # See https://dev.infopark.net/preparation
+RAILS_VERSION = '4.1.1' # https://scrivito.com/preparation
 
 def sh(cmd)
   output = %x{#{cmd} 2>&1}
