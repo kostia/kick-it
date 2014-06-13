@@ -8,7 +8,7 @@ require 'yaml'
 
 include FileUtils
 
-VERSION = '0.4.1'
+VERSION = '0.4.2'
 RAILS_VERSION = '4.1.1' # https://scrivito.com/preparation
 
 def sh(cmd)
