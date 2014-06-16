@@ -370,8 +370,24 @@ def copy_project_configs
   cp scrivito_yml, File.join(@app_dir, 'config/scrivito.yml')
 end
 
+def overwrite_dotenv
+  app_config = load_app_config
+  tenant_name = app_config['tenant']
+  api_key = app_config['api_key']
+  File.open(File.join(@app_dir, '.env'), 'w') do |f|
+    f.puts %{
+SCRIVITO_TENANT=#{tenant_name}
+SCRIVITO_API_KEY=#{api_key}
+    }
+  end
+end
+
+def load_app_config
+  YAML.load_file(File.join(@app_dir, 'config/scrivito.yml'))
+end
+
 def assert_valid_tenant_name
-  tenant_name = YAML.load_file(File.join(@app_dir, 'config/scrivito.yml'))['tenant']
+  tenant_name = load_app_config['tenant']
 
   unless tenant_name.include?('kickme')
     error %{Your project has no "kickme" in the name.
@@ -448,12 +464,13 @@ def generate_app
 
   patch_gemfile
   create_handlebars_initializer
-  copy_project_configs
+  copy_project_configs # Remove this after a while.
   assert_valid_tenant_name
 
   Dir.chdir(@app_dir) do
     bundle_app
     run_kickstarter_generator
+    overwrite_dotenv
     reset_tenant
     run_migrations
     publish_migrations
