@@ -1,3 +1,16 @@
+# 0.4.3
+
+* Dotenv integration with backwards compatibility for plain `scrivito.yml`.
+
+# 0.4.2
+
+* Rails 4.1.1.
+* Bugfixes.
+
+# 0.4.1
+
+* Bugfixes.
+
 # 0.4.0
 
 * It is possible to use `scrivito_resourcesbrowser` gem from a local repo.
